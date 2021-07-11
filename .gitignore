@@ -1,0 +1,6 @@
+tokens.tab.c
+tokens.tab.h
+lex.yy.c
+*.o
+parser.exe
+.vscode/
