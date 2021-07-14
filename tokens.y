@@ -6,7 +6,7 @@
     extern int yylineno;
     extern int yylex();
     void yyerror(const char* s);
-    UML::Node* root;
+    extern UML::Node* root;
 %}
 
 %start body
@@ -81,15 +81,6 @@ varlist: TYPE ID {
 ;
 
 %%
-
-int main(int argc, char** argv){
-    extern FILE *yyin;
-    yyin = fopen(argv[1], "r");
-    yyparse();
-
-    UML::PrintVisitor* p = new UML::PrintVisitor();
-    p->visit(root);
-}
 
 void yyerror(const char* s){
     fprintf(stderr, "error: %s\n at line: %d\n", s, yylineno);

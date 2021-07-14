@@ -2,4 +2,4 @@ class MyClass {
     int func(int x, string b);
     int value;
     string name;
-}
+};
