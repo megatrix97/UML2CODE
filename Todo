@@ -1,5 +1,5 @@
 - Create a README file for this repo
-- Create files and directories
+- [Partially Done: Now emits hpp files for classes]Create files and directories
   - Use a symbol table and scope
 - Write unittests
 - Multiple classes

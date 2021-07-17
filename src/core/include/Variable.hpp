@@ -10,6 +10,7 @@ public:
     m_type = type;
     m_id = id;
   }
+  static bool isa(Node *node);
   void accept(NodeVisitor *visitor) override;
 };
 } // namespace UML

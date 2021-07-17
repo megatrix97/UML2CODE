@@ -7,8 +7,8 @@
 #include <vector>
 
 namespace UML {
+using VarList = std::vector<Variable *>;
 class Method : public Attribute {
-  using VarList = std::vector<Variable *> *;
   VarList m_inputArgs;
 
 public:
@@ -17,8 +17,9 @@ public:
     m_id = id;
     m_inputArgs = inputArgs;
   }
-  const VarList getInputArgList() const { return m_inputArgs; }
-  const inline size_t getNumOfInputArgs() const { return m_inputArgs->size(); }
+  const VarList &getInputArgList() const { return m_inputArgs; }
+  const inline size_t getNumOfInputArgs() const { return m_inputArgs.size(); }
+  static bool isa(Node *node);
   void accept(NodeVisitor *visitor) override;
 };
 } // namespace UML

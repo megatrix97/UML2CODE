@@ -1,7 +1,7 @@
-#include "PrintVisitor.hpp"
-#include "ClassDecl.hpp"
-#include "Method.hpp"
-#include "Variable.hpp"
+#include "include/PrintVisitor.hpp"
+#include "include/ClassDecl.hpp"
+#include "include/Method.hpp"
+#include "include/Variable.hpp"
 
 namespace UML {
 void PrintVisitor::visit(Node *node) { node->accept(this); }
@@ -10,7 +10,7 @@ void PrintVisitor::visit(ClassDecl *classdecl) {
   std::cout << "------------------------------------" << std::endl;
   std::cout << "List of attributes" << std::endl;
   auto attributes = classdecl->getAttributeList();
-  for (auto attribute : *attributes) {
+  for (auto attribute : attributes) {
     visit(attribute);
   }
 }
@@ -19,7 +19,7 @@ void PrintVisitor::visit(Method *method) {
   std::cout << "-------[ReturnType]" << method->getType() << std::endl;
   std::cout << "-------[InputArgs ]" << std::endl;
   auto inputArgs = method->getInputArgList();
-  for (auto arg : *inputArgs) {
+  for (auto arg : inputArgs) {
     currentIndentationLevel = 1;
     arg->accept(this);
   }

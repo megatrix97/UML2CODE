@@ -1,7 +1,7 @@
 %{
     #include <iostream>
     #include <vector>
-    #include "RequiredHeaders.hpp"
+    #include "../core/include/RequiredHeaders.hpp"
     extern FILE *yyin;
     extern int yylineno;
     extern int yylex();
@@ -42,7 +42,7 @@ body: classdecl {
 ;
 
 classdecl: CLASS ID OPEN_CURLY attribute_list CLOSE_CURLY SEMICOLON {
-    $$ = new UML::ClassDecl($2, $4);
+    $$ = new UML::ClassDecl($2, *$4);
 }
 ;
 
@@ -66,7 +66,7 @@ vardecl: TYPE ID SEMICOLON {
 ;
 
 funcdecl: TYPE ID OPEN_PAREN varlist CLOSE_PAREN SEMICOLON{
-    $$ = new UML::Method($1, $2, $4);
+    $$ = new UML::Method($1, $2, *$4);
 }
 ;
 
@@ -83,5 +83,6 @@ varlist: TYPE ID {
 %%
 
 void yyerror(const char* s){
+    std::cout << "reached error function" << std::endl;
     fprintf(stderr, "error: %s\n at line: %d\n", s, yylineno);
 }

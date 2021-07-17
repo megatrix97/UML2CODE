@@ -1,7 +1,7 @@
 %option noyywrap yylineno
 %{
     #include <iostream>
-    #include "RequiredHeaders.hpp"
+    #include "../core/include/RequiredHeaders.hpp"
     #include "tokens.tab.h"
 %}
 

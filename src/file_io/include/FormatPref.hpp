@@ -1,5 +1,5 @@
-#ifndef __FORMATCONFIG_HPP__
-#define __FORMATCONFIG_HPP__
+#ifndef __FORMATPREF_HPP__
+#define __FORMATPREF_HPP__
 
 namespace UML {
 enum LANG { C, CPP };
