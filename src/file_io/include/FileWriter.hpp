@@ -1,6 +1,8 @@
 #ifndef __FILEWRITER_HPP__
 #define __FILEWRITER_HPP__
+
 #include "../../core/include/Node.hpp"
+#include "../../core/include/UMLData.hpp"
 #include "FormatPref.hpp"
 #include <memory>
 
@@ -11,7 +13,7 @@ class FileWriter {
 public:
   FileWriter(std::shared_ptr<FormatPref> formatPref)
       : m_formatPref(formatPref) {}
-  void write(Node *node);
+  void write(UMLData umlData);
 };
 } // namespace UML
 

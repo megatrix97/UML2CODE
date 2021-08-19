@@ -19,7 +19,9 @@ debug: DEBUG += debug
 debug: DEBUG_FLAGS += -g
 debug: all
 
-.PHONY: clean
+run: parser.exe test.blu
+	.\parser.exe .\test.blu
+
 clean:
 	${MAKE} -C ${CORE_DIR} clean
 	${MAKE} -C ${FILEIO_DIR} clean

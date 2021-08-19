@@ -7,7 +7,7 @@
 
 IDENTIFIER [_a-zA-Z][a-zA-Z_0-9]*
 CLASS "class"
-TYPE "int"|"string"
+TYPE "int"|"string"|"void"
 
 %%
 

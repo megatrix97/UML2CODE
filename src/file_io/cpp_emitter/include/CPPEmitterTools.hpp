@@ -11,8 +11,8 @@ inline std::string startHeaderGuard(std::string str) {
   return "#ifndef __" + str + "_HPP__\n" + "#define __" + str + "_HPP__\n";
 }
 
-inline std::string endHeaderGuard(std::string str) {
-  return "#endif // " + str;
+inline std::string endHeaderGuard(std::string commentStr) {
+  return "#endif " + (!commentStr.empty() ? "// " + commentStr : "");
 }
 
 } // namespace CPPEmitterTools

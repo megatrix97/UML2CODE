@@ -23,8 +23,8 @@ protected:
   ACCESS m_access;
 
 public:
-  const std::string &getId() const { return m_id; }
-  const std::string &getType() const { return m_type; }
+  std::string getId() const { return m_id; }
+  std::string getType() const { return m_type; }
   const ACCESS &getAccessType() const { return m_access; }
 };
 } // namespace UML

@@ -1,12 +1,14 @@
 %{
     #include <iostream>
     #include <vector>
+    #include <unordered_map>
     #include "../core/include/RequiredHeaders.hpp"
     extern FILE *yyin;
     extern int yylineno;
     extern int yylex();
     void yyerror(const char* s);
     extern UML::Node* root;
+    extern std::unordered_map<std::string, std::string> TypeTable;
 %}
 
 %start body
@@ -43,6 +45,7 @@ body: classdecl {
 
 classdecl: CLASS ID OPEN_CURLY attribute_list CLOSE_CURLY SEMICOLON {
     $$ = new UML::ClassDecl($2, *$4);
+    TypeTable.insert(std::make_pair($2, ""));
 }
 ;
 
@@ -62,21 +65,25 @@ attribute: funcdecl
 
 vardecl: TYPE ID SEMICOLON {
     $$ = new UML::Variable($1, $2);
+    TypeTable.insert(std::make_pair($1, ""));
 }
 ;
 
 funcdecl: TYPE ID OPEN_PAREN varlist CLOSE_PAREN SEMICOLON{
     $$ = new UML::Method($1, $2, *$4);
+    TypeTable.insert(std::make_pair($1, ""));
 }
 ;
 
 varlist: TYPE ID {
     $$ = new std::vector<UML::Variable*>();
     $$->push_back(new UML::Variable($1, $2));
+    TypeTable.insert(std::make_pair($1, ""));
 }
 | varlist COMMA TYPE ID {
     $1->push_back(new UML::Variable($3, $4));
     $$ = $1;
+    TypeTable.insert(std::make_pair($3, ""));
 }
 ;
 

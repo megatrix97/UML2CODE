@@ -5,17 +5,16 @@
 
 namespace UML {
 
-void writeCPP(Node *node, std::shared_ptr<FormatPref> formatPref) {
-  if (auto classDecl = dynamic_cast<ClassDecl *>(node)) {
-    std::unique_ptr<CPPEmitter> cppEmitter =
-        std::make_unique<CPPEmitter>(classDecl->getId() + ".hpp", formatPref);
-    cppEmitter->visit(classDecl);
-  }
+void writeCPP(UMLData umlData, const std::shared_ptr<FormatPref> formatPref) {
+
+  std::unique_ptr<CPPEmitter> cppEmitter =
+      std::make_unique<CPPEmitter>(formatPref);
+  cppEmitter->emit(umlData);
 }
 
-void FileWriter::write(Node *node) {
+void FileWriter::write(UMLData umlData) {
   if (m_formatPref->getLanguage() == LANG::CPP) {
-    writeCPP(node, m_formatPref);
+    writeCPP(umlData, m_formatPref);
   }
 }
 
