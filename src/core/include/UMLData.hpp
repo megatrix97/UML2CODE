@@ -1,22 +1,26 @@
 #ifndef __UMLDATA_HPP__
 #define __UMLDATA_HPP__
 
+#include "TypeHeaderParser.hpp"
 #include <iostream>
-#include <unordered_map>
+#include <unordered_set>
 
 namespace UML {
 class Node;
 
-using TypeHeaderTable = std::unordered_map<std::string, std::string>;
+using TypeTable = std::unordered_set<std::string>;
 
 class UMLData {
   Node *m_node;
-  TypeHeaderTable m_typeHeaderTable;
+  TypeTable m_typeTable;
+  TypeHeaderInfo m_typeHeaderInfo;
 
 public:
-  UMLData(Node *node, TypeHeaderTable typeHeaderTable)
-      : m_node(node), m_typeHeaderTable(typeHeaderTable) {}
-  TypeHeaderTable &getTypeHeaderTable() { return m_typeHeaderTable; }
+  UMLData(Node *node, TypeTable typeTable, TypeHeaderInfo typeHeaderInfo)
+      : m_node(node), m_typeTable(typeTable), m_typeHeaderInfo(typeHeaderInfo) {
+  }
+  TypeTable &getTypeTable() { return m_typeTable; }
+  TypeHeaderInfo &getTypeHeaderInfo() { return m_typeHeaderInfo; }
   Node *getNode() const { return m_node; }
 };
 } // namespace UML

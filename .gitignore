@@ -4,4 +4,6 @@ lex.yy.c
 *.o
 parser.exe
 MyClass.hpp
+MyClass.cpp
 .vscode/
+doc/

@@ -1,0 +1,8 @@
+string { namespace : std, header : string }
+int { namespace : , header : iostream }
+void { namespace : , header : iostream }
+long { namespace : , header : iostream }
+float { namespace : , header : iostream }
+vector { namespace : std, header : vector }
+unordered_map { namespace : std, header : unordered_map }
+unordered_set { namespace : std, header : unordered_set }

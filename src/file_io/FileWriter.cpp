@@ -8,8 +8,8 @@ namespace UML {
 void writeCPP(UMLData umlData, const std::shared_ptr<FormatPref> formatPref) {
 
   std::unique_ptr<CPPEmitter> cppEmitter =
-      std::make_unique<CPPEmitter>(formatPref);
-  cppEmitter->emit(umlData);
+      std::make_unique<CPPEmitter>(formatPref, umlData);
+  cppEmitter->emit();
 }
 
 void FileWriter::write(UMLData umlData) {

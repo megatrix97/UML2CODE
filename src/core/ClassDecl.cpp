@@ -14,7 +14,7 @@ const inline size_t ClassDecl::getNumOfAttributes() const {
 
 bool ClassDecl::doesInherit() const { return !m_inherits.empty(); }
 
-const std::vector<std::string> &ClassDecl::getListOfParents() const {
+const std::vector<ClassDecl *> &ClassDecl::getListOfParents() const {
   return m_inherits;
 }
 

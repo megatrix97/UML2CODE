@@ -1,21 +1,18 @@
 #include "include/CPPEmitter.hpp"
 #include "../include/EmitterTools.hpp"
+#include <utility>
 
 namespace UML {
 
-inline std::string resolveScope(std::string type) {
-  if (type == "string" || type == "vector" || type == "unordered_set" ||
-      type == "unordered_map") {
-    return "std::" + type;
-  }
-  return type;
+inline std::string CPPEmitter::resolveScope(std::string type) {
+  auto nmspc = m_umlData.getTypeHeaderInfo()[type].m_namespace;
+  if (!nmspc.empty()) {
+    return nmspc + "::" + type;
+  } else
+    return type;
 }
 
-void CPPEmitter::emit(UMLData umlData) {
-  // populate required libraries for each type in TypeTable
-
-  visit(umlData.getNode());
-}
+void CPPEmitter::emit() { visit(m_umlData.getNode()); }
 
 void CPPEmitter::visit(Node *node) { node->accept(this); }
 
@@ -31,7 +28,15 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
             << std::endl;
 
   // include required libraries
-  m_outFile << "#include <iostream>" << std::endl;
+  auto allTypes = classdecl->getTypesInvolved();
+  for (auto type : allTypes) {
+    if (m_umlData.getTypeHeaderInfo().find(type) !=
+        m_umlData.getTypeHeaderInfo().end()) {
+      m_outFile << "#include<"
+                << m_umlData.getTypeHeaderInfo()[type].m_headerfile << ">"
+                << std::endl;
+    }
+  }
 
   // class declaration
   m_outFile << "class " << classdecl->getId() << " {" << std::endl;
@@ -86,6 +91,11 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // close file
   m_outFile.close();
 
+  // add header file for the new class type
+  HeaderInfo aHeaderInfo = {"", classdecl->getId() + ".hpp"};
+  m_umlData.getTypeHeaderInfo().insert(
+      std::make_pair(classdecl->getId(), aHeaderInfo));
+
   /// preparing to write to CPP file
   m_outFile.open(classdecl->getId() + ".cpp");
   m_forDef = true;
@@ -126,7 +136,7 @@ void CPPEmitter::visit(Method *method) { /* do nothing */
   }
 }
 
-void CPPEmitter::visit(Variable *variable) { /* do nothing */
+void CPPEmitter::visit(Variable *variable) {
   // Ex: int m_var;
   m_outFile << resolveScope(variable->getType()) + " m_" + variable->getId() +
                    ";"

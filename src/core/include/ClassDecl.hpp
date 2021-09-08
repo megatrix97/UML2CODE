@@ -9,12 +9,20 @@
 #include <vector>
 
 namespace UML {
+
 class Attribute;
 using AttributeList = std::vector<Attribute *>;
+
+/**
+ * @brief ClassDecl represents a complete class with its contents.
+ * @param m_attributes contain class attributes(variables and methods).
+ * @param m_id contain the name of the class.
+ * @param m_inherits contain reference to all the parent classes.
+ */
 class ClassDecl : public Node {
   AttributeList m_attributes;
   std::string m_id;
-  std::vector<std::string> m_inherits;
+  std::vector<ClassDecl *> m_inherits;
 
 public:
   ClassDecl(std::string id, AttributeList attributes)
@@ -25,12 +33,25 @@ public:
       }
     }
   }
+  /// @brief getter function for m_attributes
   const AttributeList getAttributeList() const;
+
+  /// @brief get number of class attributes
   const inline size_t getNumOfAttributes() const;
+
+  /// @brief get name of the class
   const std::string &getId() const;
+
+  /// @brief returns true if the class inherits from other class
   bool doesInherit() const;
-  const std::vector<std::string> &getListOfParents() const;
+
+  /// @brief getter function for m_inherits
+  const std::vector<ClassDecl *> &getListOfParents() const;
+
+  /// @brief utility function to get all the types involved in the class.
+  /// Generally used to determine the required headers
   std::unordered_set<std::string> getTypesInvolved() const;
+
   void accept(NodeVisitor *visitor) override;
 };
 } // namespace UML
