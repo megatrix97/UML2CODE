@@ -12,14 +12,15 @@ namespace UML {
 class CPPEmitter : public NodeVisitor {
   std::ofstream m_outFile;
   std::shared_ptr<FormatPref> m_formatPref;
-  UMLData m_umlData;
+  std::shared_ptr<UMLData> m_umlData;
   bool m_forDef; // flag to switch between emitting declaration and definition
 
   // private functions
   inline std::string resolveScope(std::string type);
 
 public:
-  CPPEmitter(std::shared_ptr<FormatPref> formatPref, UMLData umlData)
+  CPPEmitter(std::shared_ptr<FormatPref> formatPref,
+             std::shared_ptr<UMLData> umlData)
       : m_formatPref(formatPref), m_umlData(umlData){};
   void emit();
   void visit(Node *node) override;

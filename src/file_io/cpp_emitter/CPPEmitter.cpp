@@ -5,14 +5,18 @@
 namespace UML {
 
 inline std::string CPPEmitter::resolveScope(std::string type) {
-  auto nmspc = m_umlData.getTypeHeaderInfo()[type].m_namespace;
+  if (m_umlData->getTypeHeaderInfo().find(type) ==
+      m_umlData->getTypeHeaderInfo().end())
+    return type;
+
+  auto nmspc = m_umlData->getTypeHeaderInfo()[type].m_namespace;
   if (!nmspc.empty()) {
     return nmspc + "::" + type;
   } else
     return type;
 }
 
-void CPPEmitter::emit() { visit(m_umlData.getNode()); }
+void CPPEmitter::emit() { visit(m_umlData->getNode()); }
 
 void CPPEmitter::visit(Node *node) { node->accept(this); }
 
@@ -30,10 +34,10 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // include required libraries
   auto allTypes = classdecl->getTypesInvolved();
   for (auto type : allTypes) {
-    if (m_umlData.getTypeHeaderInfo().find(type) !=
-        m_umlData.getTypeHeaderInfo().end()) {
+    if (m_umlData->getTypeHeaderInfo().find(type) !=
+        m_umlData->getTypeHeaderInfo().end()) {
       m_outFile << "#include<"
-                << m_umlData.getTypeHeaderInfo()[type].m_headerfile << ">"
+                << m_umlData->getTypeHeaderInfo()[type].m_headerfile << ">"
                 << std::endl;
     }
   }
@@ -45,18 +49,18 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
 
   // declare variables first
   for (auto attr : attributeList) {
-    if (auto var = dynamic_cast<Variable *>(attr)) {
-      visit(var);
+    if (Variable::isa(attr)) {
+      visit(attr);
       // add getter and setter functions for variable with private and protected
       // access
       auto getMethod =
-          new Method(var->getType(),
-                     "get" + EmitterTools::firstLetterToUpper(var->getId()), {},
-                     ACCESS::PUBLIC);
+          new Method(attr->getType(),
+                     "get" + EmitterTools::firstLetterToUpper(attr->getId()),
+                     {}, ACCESS::PUBLIC);
       getMethod->setClass(classdecl);
       auto setMethod = new Method(
-          "void", "set" + EmitterTools::firstLetterToUpper(var->getId()),
-          {new Variable(var->getType(), var->getId())}, ACCESS::PUBLIC);
+          "void", "set" + EmitterTools::firstLetterToUpper(attr->getId()),
+          {new Variable(attr->getType(), attr->getId())}, ACCESS::PUBLIC);
       setMethod->setClass(classdecl);
       attributeList.push_back(getMethod);
       attributeList.push_back(setMethod);
@@ -65,8 +69,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
 
   auto isMethodOfAccessType = [](Attribute *aAttribute,
                                  ACCESS aAccess) -> bool {
-    return Method::isa(aAttribute) &&
-           dynamic_cast<Method *>(aAttribute)->getAccessType() == aAccess;
+    return Method::isa(aAttribute) && aAttribute->getAccessType() == aAccess;
   };
 
   // declare private methods
@@ -93,7 +96,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
 
   // add header file for the new class type
   HeaderInfo aHeaderInfo = {"", classdecl->getId() + ".hpp"};
-  m_umlData.getTypeHeaderInfo().insert(
+  m_umlData->getTypeHeaderInfo().insert(
       std::make_pair(classdecl->getId(), aHeaderInfo));
 
   /// preparing to write to CPP file
@@ -105,8 +108,8 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
             << "\"" << std::endl;
   // writing to CPP file
   for (auto attr : attributeList) {
-    if (auto method = dynamic_cast<Method *>(attr))
-      visit(method);
+    if (Method::isa(attr))
+      visit(attr);
   }
 }
 
@@ -120,7 +123,7 @@ void CPPEmitter::visit(Method *method) { /* do nothing */
   }
   if (!m_forDef) {
     m_outFile << resolveScope(method->getType())
-              << " " + method->getId() + "(" + argsDecl + ");";
+              << " " + method->getId() + "(" + argsDecl + ");" << std::endl;
   } else {
     if (method->getClass())
       m_outFile << resolveScope(method->getType()) + " " +

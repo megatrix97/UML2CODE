@@ -33,6 +33,13 @@ public:
       }
     }
   }
+  ~ClassDecl() {
+    // needs non-trivial destructor
+    for (auto attr : m_attributes)
+      delete attr;
+    for (auto cls : m_inherits)
+      delete cls;
+  }
   /// @brief getter function for m_attributes
   const AttributeList getAttributeList() const;
 

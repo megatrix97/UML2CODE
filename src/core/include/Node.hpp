@@ -6,6 +6,7 @@ class NodeVisitor;
 
 class Node {
 public:
+  virtual ~Node(){};
   virtual void accept(NodeVisitor *aVisitor) = 0;
 };
 } // namespace UML

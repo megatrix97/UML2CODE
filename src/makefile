@@ -1,4 +1,5 @@
 CC = g++
+CPP_VER = c++17
 
 CORE_DIR = core
 FILEIO_DIR = file_io
@@ -19,11 +20,11 @@ debug: DEBUG += debug
 debug: DEBUG_FLAGS += -g
 debug: all
 
-run: parser.exe test.blu
+run: all parser.exe test.blu
 	.\parser.exe .\test.blu
 
 clean:
-	${MAKE} -C ${CORE_DIR} clean
-	${MAKE} -C ${FILEIO_DIR} clean
+	${MAKE} -C ${CORE_DIR} clean CPP_VER=${CPP_VER}
+	${MAKE} -C ${FILEIO_DIR} clean CPP_VER=${CPP_VER}
 	${MAKE} -C ${FLEXBISON_DIR} clean
 	del parser.exe

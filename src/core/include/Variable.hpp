@@ -10,6 +10,7 @@ public:
     m_type = type;
     m_id = id;
   }
+  ~Variable() = default;
   static bool isa(Node *node);
   void accept(NodeVisitor *visitor) override;
 };

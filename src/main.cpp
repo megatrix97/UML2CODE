@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   auto p = std::make_unique<UML::PrintVisitor>();
 
-  auto umlData = UML::UMLData(root, TypeTable, info);
+  auto umlData = std::make_shared<UML::UMLData>(root, TypeTable, info);
 
   auto formatPref = std::make_shared<UML::FormatPref>();
   formatPref->setLanguage(UML::LANG::CPP).setIndentation(UML::INDENTATION::TAB);

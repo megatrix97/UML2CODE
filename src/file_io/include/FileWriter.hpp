@@ -13,7 +13,7 @@ class FileWriter {
 public:
   FileWriter(std::shared_ptr<FormatPref> formatPref)
       : m_formatPref(formatPref) {}
-  void write(UMLData umlData);
+  void write(std::shared_ptr<UMLData> umlData);
 };
 } // namespace UML
 

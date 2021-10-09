@@ -4,7 +4,9 @@
 #include "Attribute.hpp"
 #include "NodeVisitor.hpp"
 #include "Variable.hpp"
+#include <algorithm>
 #include <vector>
+
 
 namespace UML {
 class ClassDecl;
@@ -26,6 +28,10 @@ public:
     m_id = id;
     m_inputArgs = inputArgs;
     m_access = accessType;
+  }
+  ~Method() {
+    std::for_each(m_inputArgs.begin(), m_inputArgs.end(),
+                  [](Variable *var) { delete (var); });
   }
   const VarList &getInputArgList() const { return m_inputArgs; }
   const inline size_t getNumOfInputArgs() const { return m_inputArgs.size(); }
