@@ -1,11 +1,13 @@
-#include "core/include/RequiredHeaders.hpp"
-#include "core/include/TypeHeaderParser.hpp"
-#include "core/include/UMLData.hpp"
-#include "file_io/include/FileWriter.hpp"
-#include "flex_bison/tokens.tab.h"
+#include "../include/core/RequiredHeaders.hpp"
+#include "../include/core/TypeHeaderParser.hpp"
+#include "../include/core/UMLData.hpp"
+#include "../include/file_io/FileWriter.hpp"
+#include "parser.hpp"
 #include <memory>
 #include <set>
+#include <string>
 #include <unordered_map>
+
 
 UML::Node *root;
 std::unordered_set<std::string> TypeTable;

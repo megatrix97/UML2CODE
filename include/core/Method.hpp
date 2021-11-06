@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <vector>
 
-
 namespace UML {
 class ClassDecl;
 using VarList = std::vector<Variable *>;
@@ -16,12 +15,7 @@ class Method : public Attribute {
   ClassDecl *m_class = nullptr;
 
 public:
-  Method(std::string type, std::string id, VarList inputArgs) {
-    m_type = type;
-    m_id = id;
-    m_inputArgs = inputArgs;
-    m_access = ACCESS::PRIVATE;
-  }
+  // ctor
   Method(std::string type, std::string id, VarList inputArgs,
          ACCESS accessType) {
     m_type = type;
@@ -29,10 +23,15 @@ public:
     m_inputArgs = inputArgs;
     m_access = accessType;
   }
+  Method(std::string type, std::string id, VarList inputArgs)
+      : Method(type, id, inputArgs, ACCESS::PRIVATE) {}
+
+  // dtor
   ~Method() {
-    std::for_each(m_inputArgs.begin(), m_inputArgs.end(),
-                  [](Variable *var) { delete (var); });
+    for (auto var : m_inputArgs)
+      delete (var);
   }
+
   const VarList &getInputArgList() const { return m_inputArgs; }
   const inline size_t getNumOfInputArgs() const { return m_inputArgs.size(); }
   bool isPropertyOfClass() const { return m_class != nullptr; }

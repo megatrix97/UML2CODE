@@ -1,9 +1,9 @@
 #ifndef __CPPEMITTER_HPP__
 #define __CPPEMITTER_HPP__
 
-#include "../../../core/include/RequiredHeaders.hpp"
-#include "../../../core/include/UMLData.hpp"
-#include "../../include/FormatPref.hpp"
+#include "../../core/RequiredHeaders.hpp"
+#include "../../core/UMLData.hpp"
+#include "../FormatPref.hpp"
 #include "CPPEmitterTools.hpp"
 #include <fstream>
 #include <memory>
@@ -22,11 +22,12 @@ public:
   CPPEmitter(std::shared_ptr<FormatPref> formatPref,
              std::shared_ptr<UMLData> umlData)
       : m_formatPref(formatPref), m_umlData(umlData){};
-  void emit();
+  ~CPPEmitter();
   void visit(Node *node) override;
   void visit(ClassDecl *classdecl) override;
   void visit(Variable *variable) override;
   void visit(Method *method) override;
+  void emit();
 };
 } // namespace UML
 

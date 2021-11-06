@@ -1,8 +1,8 @@
 %option noyywrap yylineno
 %{
     #include <iostream>
-    #include "../core/include/RequiredHeaders.hpp"
-    #include "tokens.tab.h"
+    #include "RequiredHeaders.hpp"
+    #include "parser.hpp"
 %}
 
 IDENTIFIER [_a-zA-Z][a-zA-Z_0-9]*

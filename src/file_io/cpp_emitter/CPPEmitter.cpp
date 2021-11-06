@@ -1,5 +1,5 @@
-#include "include/CPPEmitter.hpp"
-#include "../include/EmitterTools.hpp"
+#include "../../../include/file_io/cpp_emitter/CPPEmitter.hpp"
+#include "../../../include/file_io/EmitterTools.hpp"
 #include <utility>
 
 namespace UML {
@@ -16,7 +16,7 @@ inline std::string CPPEmitter::resolveScope(std::string type) {
     return type;
 }
 
-void CPPEmitter::emit() { visit(m_umlData->getNode()); }
+CPPEmitter::~CPPEmitter() {}
 
 void CPPEmitter::visit(Node *node) { node->accept(this); }
 
@@ -145,5 +145,7 @@ void CPPEmitter::visit(Variable *variable) {
                    ";"
             << std::endl;
 }
+
+void CPPEmitter::emit() { visit(m_umlData->getNode()); }
 
 } // namespace UML

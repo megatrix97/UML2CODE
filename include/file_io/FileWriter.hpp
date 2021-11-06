@@ -1,8 +1,8 @@
 #ifndef __FILEWRITER_HPP__
 #define __FILEWRITER_HPP__
 
-#include "../../core/include/Node.hpp"
-#include "../../core/include/UMLData.hpp"
+#include "../core/Node.hpp"
+#include "../core/UMLData.hpp"
 #include "FormatPref.hpp"
 #include <memory>
 

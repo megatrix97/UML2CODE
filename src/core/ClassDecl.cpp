@@ -1,7 +1,6 @@
-#include "include/ClassDecl.hpp"
-#include "include/NodeVisitor.hpp"
+#include "../../include/core/ClassDecl.hpp"
+#include "../../include/core/NodeVisitor.hpp"
 #include <unordered_set>
-#include <yvals.h>
 
 namespace UML {
 const std::string &ClassDecl::getId() const { return m_id; }

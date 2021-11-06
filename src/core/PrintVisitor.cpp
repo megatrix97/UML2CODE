@@ -1,7 +1,7 @@
-#include "include/PrintVisitor.hpp"
-#include "include/ClassDecl.hpp"
-#include "include/Method.hpp"
-#include "include/Variable.hpp"
+#include "../../include/core/PrintVisitor.hpp"
+#include "../../include/core/ClassDecl.hpp"
+#include "../../include/core/Method.hpp"
+#include "../../include/core/Variable.hpp"
 
 namespace UML {
 void PrintVisitor::visit(Node *node) { node->accept(this); }

@@ -15,6 +15,7 @@ class Method;
 
 class NodeVisitor {
 public:
+  virtual ~NodeVisitor() {}
   virtual void visit(Node *n) = 0;
   virtual void visit(ClassDecl *classdecl) = 0;
   virtual void visit(Variable *variable) = 0;

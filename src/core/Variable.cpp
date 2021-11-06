@@ -1,5 +1,5 @@
-#include "include/Variable.hpp"
-#include "include/NodeVisitor.hpp"
+#include "../../include/core/Variable.hpp"
+#include "../../include/core/NodeVisitor.hpp"
 
 namespace UML {
 bool Variable::isa(Node *node) {

@@ -2,7 +2,9 @@
 
 #define __TYPEHEADERPARSER_HPP__
 #include <iostream>
+#include <string>
 #include <unordered_map>
+
 struct HeaderInfo {
   std::string m_headerfile;
   std::string m_namespace;

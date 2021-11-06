@@ -6,4 +6,6 @@ parser.exe
 MyClass.hpp
 MyClass.cpp
 .vscode/
+.cache/
 doc/
+build/
