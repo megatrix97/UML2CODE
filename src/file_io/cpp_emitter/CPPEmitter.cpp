@@ -1,8 +1,11 @@
 #include "../../../include/file_io/cpp_emitter/CPPEmitter.hpp"
 #include "../../../include/file_io/EmitterTools.hpp"
+#include <string_view>
 #include <utility>
 
 namespace UML {
+
+constexpr std::string_view PRAGMA_ONCE = "#pragma once";
 
 inline std::string CPPEmitter::resolveScope(std::string type) {
   if (m_umlData->getTypeHeaderInfo().find(type) ==
@@ -28,8 +31,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   /// writing to HPP file
 
   // Adding header guards
-  m_outFile << CPPEmitterTools::startHeaderGuard(classdecl->getId())
-            << std::endl;
+  m_outFile << PRAGMA_ONCE << std::endl;
 
   // include required libraries
   auto allTypes = classdecl->getTypesInvolved();
@@ -50,7 +52,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // declare variables first
   for (auto attr : attributeList) {
     if (Variable::isa(attr)) {
-      visit(attr);
+      attr->accept(this);
       // add getter and setter functions for variable with private and protected
       // access
       auto getMethod =
@@ -75,7 +77,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // declare private methods
   for (auto attr : attributeList) {
     if (isMethodOfAccessType(attr, ACCESS::PRIVATE))
-      visit(attr);
+      attr->accept(this);
   }
 
   m_outFile << "public: " << std::endl;
@@ -83,18 +85,15 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // declare public methods
   for (auto attr : attributeList) {
     if (isMethodOfAccessType(attr, ACCESS::PUBLIC))
-      visit(attr);
+      attr->accept(this);
   }
 
   m_outFile << "}; " << std::endl;
 
-  // end header guards
-  m_outFile << CPPEmitterTools::endHeaderGuard(classdecl->getId()) << std::endl;
-
   // close file
   m_outFile.close();
 
-  // add header file for the new class type
+  // add header file info for the new class type
   HeaderInfo aHeaderInfo = {"", classdecl->getId() + ".hpp"};
   m_umlData->getTypeHeaderInfo().insert(
       std::make_pair(classdecl->getId(), aHeaderInfo));
@@ -109,7 +108,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
   // writing to CPP file
   for (auto attr : attributeList) {
     if (Method::isa(attr))
-      visit(attr);
+      attr->accept(this);
   }
 }
 

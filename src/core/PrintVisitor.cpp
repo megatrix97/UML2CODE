@@ -6,12 +6,12 @@
 namespace UML {
 void PrintVisitor::visit(Node *node) { node->accept(this); }
 void PrintVisitor::visit(ClassDecl *classdecl) {
-  std::cout << classdecl->getId() << "class details:" << std::endl;
+  std::cout << classdecl->getId() << " details:" << std::endl;
   std::cout << "------------------------------------" << std::endl;
   std::cout << "List of attributes" << std::endl;
   auto attributes = classdecl->getAttributeList();
   for (auto attribute : attributes) {
-    visit(attribute);
+    attribute->accept(this);
   }
 }
 void PrintVisitor::visit(Method *method) {
@@ -19,11 +19,12 @@ void PrintVisitor::visit(Method *method) {
   std::cout << "-------[ReturnType]" << method->getType() << std::endl;
   std::cout << "-------[InputArgs ]" << std::endl;
   auto inputArgs = method->getInputArgList();
+
+  currentIndentationLevel++;
   for (auto arg : inputArgs) {
-    currentIndentationLevel = 1;
     arg->accept(this);
   }
-  currentIndentationLevel = 0;
+  currentIndentationLevel--;
 }
 
 void PrintVisitor::visit(Variable *variable) {
