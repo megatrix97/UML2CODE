@@ -1,6 +1,4 @@
-#ifndef __CPPEMITTERTOOLS_HPP__
-#define __CPPEMITTERTOOLS_HPP__
-
+#pragma once
 #include <iostream>
 
 namespace UML {
@@ -9,5 +7,3 @@ inline std::string getVarName(std::string str) { return "m_" + str; }
 
 } // namespace CPPEmitterTools
 } // namespace UML
-
-#endif

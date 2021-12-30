@@ -1,6 +1,6 @@
-#include "../../include/file_io/FileWriter.hpp"
-#include "../../include/core/ClassDecl.hpp"
-#include "../../include/file_io/cpp_emitter/CPPEmitter.hpp"
+#include "file_io/FileWriter.hpp"
+#include "core/ClassDecl.hpp"
+#include "file_io/cpp_emitter/CPPEmitter.hpp"
 #include <memory>
 
 namespace UML {

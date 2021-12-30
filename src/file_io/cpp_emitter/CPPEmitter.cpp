@@ -1,5 +1,6 @@
-#include "../../../include/file_io/cpp_emitter/CPPEmitter.hpp"
-#include "../../../include/file_io/EmitterTools.hpp"
+#include "file_io/cpp_emitter/CPPEmitter.hpp"
+#include "core/ClassDecl.hpp"
+#include "file_io/EmitterTools.hpp"
 #include <string_view>
 #include <utility>
 
@@ -21,33 +22,33 @@ inline std::string CPPEmitter::resolveScope(std::string type) {
 
 CPPEmitter::~CPPEmitter() {}
 
-void CPPEmitter::visit(Node *node) { node->accept(this); }
-
-void CPPEmitter::visit(ClassDecl *classdecl) {
-  /// preparing to write to HPP file
-  m_outFile.open(classdecl->getId() + ".hpp");
+void CPPEmitter::prepareToWriteToHpp() {
+  // HPP files only contain declarations. Setting flag m_forDef for the emitter
+  // to know what to emit.
   m_forDef = false;
+}
 
-  /// writing to HPP file
-
+void CPPEmitter::addRequiredLibraries(ClassDecl *p_classdecl) {
   // Adding header guards
-  m_outFile << PRAGMA_ONCE << std::endl;
+  m_strStream << PRAGMA_ONCE << std::endl;
 
   // include required libraries
-  auto allTypes = classdecl->getTypesInvolved();
+  auto allTypes = p_classdecl->getTypesInvolved();
   for (auto type : allTypes) {
     if (m_umlData->getTypeHeaderInfo().find(type) !=
         m_umlData->getTypeHeaderInfo().end()) {
-      m_outFile << "#include<"
-                << m_umlData->getTypeHeaderInfo()[type].m_headerfile << ">"
-                << std::endl;
+      m_strStream << "#include<"
+                  << m_umlData->getTypeHeaderInfo()[type].m_headerfile << ">"
+                  << std::endl;
     }
   }
+}
 
+void CPPEmitter::declareClassAndItsAttributes(ClassDecl *p_classdecl) {
   // class declaration
-  m_outFile << "class " << classdecl->getId() << " {" << std::endl;
+  m_strStream << "class " << p_classdecl->getId() << " {" << std::endl;
 
-  auto attributeList = classdecl->getAttributeList();
+  auto attributeList = p_classdecl->getAttributeList();
 
   // declare variables first
   for (auto attr : attributeList) {
@@ -59,11 +60,11 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
           new Method(attr->getType(),
                      "get" + EmitterTools::firstLetterToUpper(attr->getId()),
                      {}, ACCESS::PUBLIC);
-      getMethod->setClass(classdecl);
+      getMethod->setClass(p_classdecl);
       auto setMethod = new Method(
           "void", "set" + EmitterTools::firstLetterToUpper(attr->getId()),
           {new Variable(attr->getType(), attr->getId())}, ACCESS::PUBLIC);
-      setMethod->setClass(classdecl);
+      setMethod->setClass(p_classdecl);
       attributeList.push_back(getMethod);
       attributeList.push_back(setMethod);
     }
@@ -80,7 +81,7 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
       attr->accept(this);
   }
 
-  m_outFile << "public: " << std::endl;
+  m_strStream << "public: " << std::endl;
 
   // declare public methods
   for (auto attr : attributeList) {
@@ -88,24 +89,46 @@ void CPPEmitter::visit(ClassDecl *classdecl) {
       attr->accept(this);
   }
 
-  m_outFile << "}; " << std::endl;
+  m_strStream << "}; " << std::endl;
+}
 
-  // close file
+std::string CPPEmitter::writeToHpp(std::string p_filename_wo_ext) {
+  std::string hppFilename = p_filename_wo_ext + ".hpp";
+  m_outFile.open(hppFilename);
+  m_outFile << m_strStream.str();
   m_outFile.close();
+  return hppFilename;
+}
+
+void CPPEmitter::prepareToWriteToCpp() { m_forDef = true; }
+
+void CPPEmitter::writeToCpp(std::string p_filename_wo_ext) {
+  m_outFile.open(p_filename_wo_ext + ".cpp");
+  m_outFile << m_strStream.str();
+}
+
+void CPPEmitter::visit(Node *node) { node->accept(this); }
+
+void CPPEmitter::visit(ClassDecl *p_classdecl) {
+
+  prepareToWriteToHpp();
+  addRequiredLibraries(p_classdecl);
+  declareClassAndItsAttributes(p_classdecl);
+  auto hppFilename = writeToHpp(p_classdecl->getId());
 
   // add header file info for the new class type
-  HeaderInfo aHeaderInfo = {"", classdecl->getId() + ".hpp"};
+  HeaderInfo aHeaderInfo = {"", hppFilename};
   m_umlData->getTypeHeaderInfo().insert(
-      std::make_pair(classdecl->getId(), aHeaderInfo));
+      std::make_pair(p_classdecl->getId(), aHeaderInfo));
 
-  /// preparing to write to CPP file
-  m_outFile.open(classdecl->getId() + ".cpp");
-  m_forDef = true;
-
+  prepareToWriteToCpp();
   // include required libraries
-  m_outFile << "#include \"" << classdecl->getId() + ".hpp"
-            << "\"" << std::endl;
+  // we only include class .hpp file because it contains all the required
+  // headers already.
+  m_strStream << "#include \"" << p_classdecl->getId() + ".hpp"
+              << "\"" << std::endl;
   // writing to CPP file
+  auto attributeList = p_classdecl->getAttributeList();
   for (auto attr : attributeList) {
     if (Method::isa(attr))
       attr->accept(this);
@@ -121,28 +144,28 @@ void CPPEmitter::visit(Method *method) { /* do nothing */
       argsDecl += ", ";
   }
   if (!m_forDef) {
-    m_outFile << resolveScope(method->getType())
-              << " " + method->getId() + "(" + argsDecl + ");" << std::endl;
+    m_strStream << resolveScope(method->getType())
+                << " " + method->getId() + "(" + argsDecl + ");" << std::endl;
   } else {
     if (method->getClass())
-      m_outFile << resolveScope(method->getType()) + " " +
-                       method->getClass()->getId() + "::" + method->getId() +
-                       "(" + argsDecl + ") {"
-                << std::endl
-                << "}" << std::endl;
+      m_strStream << resolveScope(method->getType()) + " " +
+                         method->getClass()->getId() + "::" + method->getId() +
+                         "(" + argsDecl + ") {"
+                  << std::endl
+                  << "}" << std::endl;
     else
-      m_outFile << resolveScope(method->getType()) + " " + method->getId() +
-                       "(" + argsDecl + ") {"
-                << std::endl
-                << "}" << std::endl;
+      m_strStream << resolveScope(method->getType()) + " " + method->getId() +
+                         "(" + argsDecl + ") {"
+                  << std::endl
+                  << "}" << std::endl;
   }
 }
 
 void CPPEmitter::visit(Variable *variable) {
   // Ex: int m_var;
-  m_outFile << resolveScope(variable->getType()) + " m_" + variable->getId() +
-                   ";"
-            << std::endl;
+  m_strStream << resolveScope(variable->getType()) + " m_" + variable->getId() +
+                     ";"
+              << std::endl;
 }
 
 void CPPEmitter::emit() { visit(m_umlData->getNode()); }

@@ -1,4 +1,4 @@
-#include "../../include/core/TypeHeaderParser.hpp"
+#include "core/TypeHeaderParser.hpp"
 #include <fstream>
 #include <iostream>
 #include <regex>

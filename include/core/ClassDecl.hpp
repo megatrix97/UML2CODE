@@ -40,19 +40,17 @@ public:
     for (auto cls : m_inherits)
       delete cls;
   }
-  /// @brief getter function for m_attributes
-  const AttributeList getAttributeList() const;
+
+  const AttributeList &getAttributeList() const;
 
   /// @brief get number of class attributes
   const inline size_t getNumOfAttributes() const;
 
-  /// @brief get name of the class
   const std::string &getId() const;
 
   /// @brief returns true if the class inherits from other class
   bool doesInherit() const;
 
-  /// @brief getter function for m_inherits
   const std::vector<ClassDecl *> &getListOfParents() const;
 
   /// @brief utility function to get all the types involved in the class.

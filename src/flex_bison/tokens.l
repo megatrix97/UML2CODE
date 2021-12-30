@@ -1,7 +1,7 @@
 %option noyywrap yylineno
 %{
     #include <iostream>
-    #include "RequiredHeaders.hpp"
+    #include "core/RequiredHeaders.hpp"
     #include "parser.hpp"
 %}
 

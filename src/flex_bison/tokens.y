@@ -2,7 +2,7 @@
     #include <iostream>
     #include <vector>
     #include <unordered_set>
-    #include "../../include/core/RequiredHeaders.hpp"
+    #include "core/RequiredHeaders.hpp"
     extern FILE *yyin;
     extern int yylineno;
     extern int yylex();
