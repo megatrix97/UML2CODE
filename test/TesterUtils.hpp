@@ -1,9 +1,9 @@
 #pragma once
+#include "core/Node.hpp"
 #include "core/RequiredHeaders.hpp"
+#include "file_io/cpp_emitter/CPPEmitter.hpp"
 
-extern UML::Node *root;
-
-class ParserTester {
+class CPPEmitterTester {
 public:
-  void setup();
+  std::string getCPP(UML::Node *node, UML::CPPEmitter *aCPPEmitter);
 };

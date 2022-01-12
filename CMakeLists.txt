@@ -17,7 +17,7 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 BISON_TARGET(umlParser ${SRC_FLEX_BISON}/tokens.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
-FLEX_TARGET(umlScanner ${SRC_FLEX_BISON}/tokens.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+FLEX_TARGET(umlScanner ${SRC_FLEX_BISON}/tokens.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS --header-file)
 ADD_FLEX_BISON_DEPENDENCY(umlScanner umlParser)
 
 add_subdirectory(src/core)
@@ -31,8 +31,8 @@ ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(uml2code_exec ${CMAKE_PROJECT_NAME}_core)
 
 # for library -- needed for tests
-add_library(uml2code ${all_SRC} ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+add_library(uml2code ${all_SRC})
 target_include_directories(uml2code PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
-${CMAKE_CURRENT_BINARY_DIR})
+)
 target_link_libraries(uml2code ${CMAKE_PROJECT_NAME}_core)

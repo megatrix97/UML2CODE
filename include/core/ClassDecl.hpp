@@ -43,6 +43,8 @@ public:
 
   const AttributeList &getAttributeList() const;
 
+  void addAttribute(Attribute *p_attribute);
+
   /// @brief get number of class attributes
   const inline size_t getNumOfAttributes() const;
 

@@ -1,7 +1,7 @@
 #include "core/RequiredHeaders.hpp"
-#include "core/TypeHeaderParser.hpp"
 #include "core/UMLData.hpp"
 #include "file_io/FileWriter.hpp"
+#include "file_io/cpp_emitter/TypeHeaderParser.hpp"
 #include "parser.hpp"
 #include <iostream>
 #include <memory>
@@ -27,25 +27,16 @@ int main(int argc, char **argv) {
   for (auto entry : TypeTable)
     std::cout << entry << std::endl;
 
-  TypeHeaderParser thParser("../CPPTypeheaders.txt");
-  thParser.parse();
-  auto info = thParser.getParsedInfo();
-  for (auto el : info) {
-    std::cout << "Type : " << el.first << " details : "
-              << "[ namespace: " << el.second.m_namespace
-              << ", header: " << el.second.m_headerfile << " ]" << std::endl;
-  }
-
   auto p = std::make_unique<UML::PrintVisitor>();
 
-  auto umlData = std::make_shared<UML::UMLData>(root, TypeTable, info);
+  auto umlData = std::make_unique<UML::UMLData>(root, TypeTable);
 
-  auto formatPref = std::make_shared<UML::FormatPref>();
+  auto formatPref = std::make_unique<UML::FormatPref>();
   formatPref->setLanguage(UML::LANG::CPP).setIndentation(UML::INDENTATION::TAB);
 
-  auto fw = std::make_unique<UML::FileWriter>(formatPref);
+  auto fw = std::make_unique<UML::FileWriter>(formatPref.get());
 
   p->visit(root);
-  fw->write(umlData);
+  fw->write(umlData.get());
   std::cout << "ran write command" << std::endl;
 }

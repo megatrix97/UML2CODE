@@ -1,19 +1,18 @@
 #ifndef __FILEWRITER_HPP__
 #define __FILEWRITER_HPP__
 
-#include "../core/Node.hpp"
-#include "../core/UMLData.hpp"
 #include "FormatPref.hpp"
-#include <memory>
+#include "core/Node.hpp"
+#include "core/UMLData.hpp"
 
 namespace UML {
 class FileWriter {
-  std::shared_ptr<FormatPref> m_formatPref;
+  FormatPref *m_formatPref;
 
 public:
-  FileWriter(std::shared_ptr<FormatPref> formatPref)
-      : m_formatPref(formatPref) {}
-  void write(std::shared_ptr<UMLData> umlData);
+  FileWriter(FormatPref *formatPref) : m_formatPref(formatPref) {}
+  virtual void write(UMLData *umlData);
+  virtual ~FileWriter(){};
 };
 } // namespace UML
 

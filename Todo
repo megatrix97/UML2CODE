@@ -6,3 +6,8 @@
 - Support Inheritance 
 - Interpret relationship b/w classes 
 - Create Class diagrams
+----------------------------------------------------
+Refactoring:
+1. CPPEmitter should only be responsible for providing CPP syntax
+  a. Use a different class to handle writing to appropriate files (.cpp/.hpp); maybe inherit from FileWriter
+  b. Use template functions which work differently for definition and declaration.

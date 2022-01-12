@@ -1,14 +1,21 @@
-#include "core/TypeHeaderParser.hpp"
+#include "file_io/cpp_emitter/TypeHeaderParser.hpp"
 #include <fstream>
 #include <iostream>
 #include <regex>
 #include <stdlib.h>
 
-void TypeHeaderParser::parse() {
+bool TypeHeaderParser::parsed = false;
+std::string const TypeHeaderParser::filename = "../res/CPPTypeHeaders.txt";
+TypeHeaderInfo TypeHeaderParser::typeHeaderInfo{};
+
+TypeHeaderInfo &TypeHeaderParser::parseAndGetInfo() {
+  if (parsed)
+    return typeHeaderInfo;
+
   std::ifstream fileToParse;
-  fileToParse.open(m_filename);
+  fileToParse.open(filename);
   if (!fileToParse) {
-    std::cerr << "\'" << m_filename << "\'"
+    std::cerr << "\'" << filename << "\'"
               << " file could not be opened" << std::endl;
     exit(1);
   }
@@ -23,8 +30,10 @@ void TypeHeaderParser::parse() {
       HeaderInfo hInfo;
       hInfo.m_headerfile = matches.str(3);
       hInfo.m_namespace = matches.str(2);
-      m_typeHeaderInfo.insert(std::make_pair(type, hInfo));
+      typeHeaderInfo.insert(std::make_pair(type, hInfo));
     }
   }
   fileToParse.close();
+  parsed = true;
+  return typeHeaderInfo;
 }

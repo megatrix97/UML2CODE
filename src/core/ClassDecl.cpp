@@ -1,4 +1,5 @@
 #include "core/ClassDecl.hpp"
+#include "core/Attribute.hpp"
 #include "core/NodeVisitor.hpp"
 #include <unordered_set>
 
@@ -7,6 +8,10 @@ const std::string &ClassDecl::getId() const { return m_id; }
 
 const AttributeList &ClassDecl::getAttributeList() const {
   return m_attributes;
+}
+
+void ClassDecl::addAttribute(Attribute *p_attribute) {
+  m_attributes.push_back(p_attribute);
 }
 
 const inline size_t ClassDecl::getNumOfAttributes() const {

@@ -13,9 +13,10 @@ FetchContent_MakeAvailable(googletest)
 # get all src files in test directory
 file(GLOB test_SRC "*.cpp")
 
-add_executable(${BINARY} ${test_SRC})
+add_executable(${BINARY} ${test_SRC} ${PROJECT_BINARY_DIR}/lexer.cpp ${PROJECT_BINARY_DIR}/parser.cpp)
 target_include_directories(${BINARY} PUBLIC 
 ${PROJECT_SOURCE_DIR}/include
+${PROJECT_BINARY_DIR}
 )
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
