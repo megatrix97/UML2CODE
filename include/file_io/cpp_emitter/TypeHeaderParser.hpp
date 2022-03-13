@@ -18,7 +18,7 @@ class TypeHeaderParser {
   static bool parsed;
 
 public:
-  static TypeHeaderInfo &parseAndGetInfo();
+  static TypeHeaderInfo *parseAndGetInfo();
 };
 
 #endif

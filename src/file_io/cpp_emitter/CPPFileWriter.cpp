@@ -6,7 +6,6 @@
 #include <fstream>
 #include <memory>
 
-
 namespace UML {
 
 void CPPFileWriter::write(UMLData *p_umlData) {
@@ -23,7 +22,7 @@ void CPPFileWriter::write(UMLData *p_umlData) {
   outFile.close();
 
   HeaderInfo aHeaderInfo = {hppFilename, ""};
-  TypeHeaderParser::parseAndGetInfo().insert(
+  TypeHeaderParser::parseAndGetInfo()->insert(
       std::make_pair(classDecl->getId(), aHeaderInfo));
 
   std::string cppContents = aCPPEmitter->emit<true /*for cpp*/>();

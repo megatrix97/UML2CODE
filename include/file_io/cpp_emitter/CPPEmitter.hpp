@@ -17,7 +17,7 @@ constexpr std::string_view PRAGMA_ONCE = "#pragma once";
 class CPPEmitter : public NodeVisitor {
   std::stringstream m_strStream;
   UMLData *m_umlData;
-  TypeHeaderInfo m_thInfo;
+  TypeHeaderInfo *m_thInfo;
   bool m_forDef =
       false; // flag to switch between emitting declaration and definition
 
@@ -44,8 +44,6 @@ public:
     m_strStream.str(std::string());
     return strToEmit;
   }
-
-  friend class CPPEmitterTester;
 };
 
 } // namespace UML

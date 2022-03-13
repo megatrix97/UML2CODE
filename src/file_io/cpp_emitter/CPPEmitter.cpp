@@ -2,12 +2,16 @@
 #include "core/ClassDecl.hpp"
 #include "file_io/EmitterTools.hpp"
 #include "file_io/cpp_emitter/TypeHeaderParser.hpp"
+#include <memory>
 #include <string_view>
 #include <utility>
 
 namespace UML {
 
-template <> void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
+template <>
+void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
+  /// generate content to emit .hpp files
+
   // class declaration
   m_strStream << "class " << p_classdecl->getId() << " {" << std::endl;
 
@@ -43,26 +47,24 @@ template <> void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
 
   // declare private methods
   for (auto attr : attributeList) {
-    if (isMethodOfAccessType(attr, ACCESS::PRIVATE))
-      attr->accept(this);
+    if (isMethodOfAccessType(attr, ACCESS::PRIVATE)) attr->accept(this);
   }
 
   m_strStream << "public: " << std::endl;
 
   // declare public methods
   for (auto attr : attributeList) {
-    if (isMethodOfAccessType(attr, ACCESS::PUBLIC))
-      attr->accept(this);
+    if (isMethodOfAccessType(attr, ACCESS::PUBLIC)) attr->accept(this);
   }
 
   m_strStream << "}; " << std::endl;
 }
 
-template <> void CPPEmitter::generateContent<true>(ClassDecl *p_classdecl) {
+template <>
+void CPPEmitter::generateContent<true>(ClassDecl *p_classdecl) {
   auto attributeList = p_classdecl->getAttributeList();
   for (auto attr : attributeList) {
-    if (Method::isa(attr))
-      attr->accept(this);
+    if (Method::isa(attr)) attr->accept(this);
   }
 }
 
@@ -72,12 +74,15 @@ void CPPEmitter::addRequiredLibraries<false>(ClassDecl *p_classdecl) {
   m_strStream << PRAGMA_ONCE << std::endl;
 
   // include required libraries
-  auto allTypes = p_classdecl->getTypesInvolved();
+  auto allTypes = p_classdecl->getInvolvedTypes();
+  std::unordered_set<std::string> allHeaders;
   for (auto type : allTypes) {
-    if (m_thInfo.find(type) != m_thInfo.end()) {
-      m_strStream << "#include<" << m_thInfo[type].m_headerfile << ">"
-                  << std::endl;
+    if (m_thInfo->find(type) != m_thInfo->end()) {
+      allHeaders.insert((*m_thInfo)[type].m_headerfile);
     }
+  }
+  for (auto header : allHeaders) {
+    m_strStream << "#include<" << header << ">" << std::endl;
   }
 }
 
@@ -85,8 +90,8 @@ template <>
 void CPPEmitter::addRequiredLibraries<true>(ClassDecl *p_classdecl) {
   // we only include the .hpp file where class is present.
   // Because, we have already included all other libraries in .hpp already.
-  auto header = m_thInfo.find(p_classdecl->getId());
-  if (header != m_thInfo.end()) {
+  auto header = m_thInfo->find(p_classdecl->getId());
+  if (header != m_thInfo->end()) {
     std::cout << "header file: " << (*header).second.m_headerfile
               << ", class: " << (*header).first << std::endl;
     m_strStream << "#include \"" << (*header).second.m_headerfile << "\""
@@ -95,10 +100,9 @@ void CPPEmitter::addRequiredLibraries<true>(ClassDecl *p_classdecl) {
 }
 
 inline std::string CPPEmitter::resolveScope(std::string type) {
-  if (m_thInfo.find(type) == m_thInfo.end())
-    return type;
+  if (m_thInfo->find(type) == m_thInfo->end()) return type;
 
-  auto nmspc = m_thInfo[type].m_namespace;
+  auto nmspc = (*m_thInfo)[type].m_namespace;
   if (!nmspc.empty()) {
     return nmspc + "::" + type;
   } else
@@ -124,8 +128,7 @@ void CPPEmitter::visit(Method *method) { /* do nothing */
   std::string argsDecl;
   for (auto arg = argList.begin(); arg != argList.end(); arg++) {
     argsDecl += resolveScope((*arg)->getType()) + " " + (*arg)->getId();
-    if (arg + 1 != argList.end())
-      argsDecl += ", ";
+    if (arg + 1 != argList.end()) argsDecl += ", ";
   }
   if (!m_forDef) {
     m_strStream << resolveScope(method->getType())
@@ -151,4 +154,4 @@ void CPPEmitter::visit(Variable *variable) {
                      ";"
               << std::endl;
 }
-} // namespace UML
+}  // namespace UML

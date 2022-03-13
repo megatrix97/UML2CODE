@@ -1,14 +1,22 @@
-#ifndef __CLASSDECL_HPP__
-#define __CLASSDECL_HPP__
+#pragma once
 
 #include "Method.hpp"
 #include "Node.hpp"
 #include "Variable.hpp"
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 namespace UML {
+
+enum RELATION {
+  AGGREGATION,
+  INHERITANCE,
+  COMPOSITION,
+  DEPENDENCY,
+  ASSOCIATION
+};
 
 class Attribute;
 using AttributeList = std::vector<Attribute *>;
@@ -22,9 +30,10 @@ using AttributeList = std::vector<Attribute *>;
 class ClassDecl : public Node {
   AttributeList m_attributes;
   std::string m_id;
-  std::vector<ClassDecl *> m_inherits;
+  std::unordered_set<std::string> m_typesInvolved;
+  std::unordered_map<RELATION, std::vector<ClassDecl *>> m_relatedClasses;
 
-public:
+ public:
   ClassDecl(std::string id, AttributeList attributes)
       : m_id(id), m_attributes(attributes) {
     for (auto attr : attributes) {
@@ -33,12 +42,10 @@ public:
       }
     }
   }
+
   ~ClassDecl() {
     // needs non-trivial destructor
-    for (auto attr : m_attributes)
-      delete attr;
-    for (auto cls : m_inherits)
-      delete cls;
+    for (auto attr : m_attributes) delete attr;
   }
 
   const AttributeList &getAttributeList() const;
@@ -50,17 +57,12 @@ public:
 
   const std::string &getId() const;
 
-  /// @brief returns true if the class inherits from other class
-  bool doesInherit() const;
-
-  const std::vector<ClassDecl *> &getListOfParents() const;
-
   /// @brief utility function to get all the types involved in the class.
   /// Generally used to determine the required headers
-  std::unordered_set<std::string> getTypesInvolved() const;
+  std::unordered_set<std::string> getInvolvedTypes() const;
+
+  const std::vector<ClassDecl *> &getClassesRelatedWith(RELATION p_relation);
 
   void accept(NodeVisitor *visitor) override;
 };
-} // namespace UML
-
-#endif //__CLASSDECL_HPP__
+}  // namespace UML

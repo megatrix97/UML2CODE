@@ -22,4 +22,4 @@ ${PROJECT_BINARY_DIR}
 add_test(NAME ${BINARY} COMMAND ${BINARY})
 
 # link gtest_main
-target_link_libraries(${BINARY} PUBLIC uml2code gtest_main)
+target_link_libraries(${BINARY} PUBLIC uml2code gmock gtest_main)
