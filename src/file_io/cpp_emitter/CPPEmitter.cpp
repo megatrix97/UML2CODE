@@ -42,7 +42,8 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
 
   auto isMethodOfAccessType = [](Attribute *aAttribute,
                                  ACCESS aAccess) -> bool {
-    return Method::isa(aAttribute) && aAttribute->getAccessType() == aAccess;
+    return Method::isa(aAttribute) &&
+           aAttribute->getAccessType().getType() == aAccess;
   };
 
   // declare private methods

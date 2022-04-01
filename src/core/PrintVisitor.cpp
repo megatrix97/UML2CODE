@@ -55,12 +55,14 @@ void PrintVisitor::visit(ClassDecl *classdecl) {
 void PrintVisitor::visit(Method *method) {
   std::string format = R"("method" : { 
     "name" : "%s", 
-    "returntype" : "%s", 
+    "returntype" : "%s",
+    "visibility" : "%s", 
     "inputargs" : [)";
 
   char formattedStr[2048];
   sprintf(formattedStr, format.c_str(), method->getId().c_str(),
-          method->getType().c_str());
+          method->getType().c_str(),
+          method->getAccessType().toString().c_str());
   std::cout << formattedStr;
 
   auto inputArgs = method->getInputArgList();
@@ -80,12 +82,14 @@ void PrintVisitor::visit(Method *method) {
 void PrintVisitor::visit(Variable *variable) {
   std::string format = R"("variable" : { 
     "name" : "%s",
-    "type" : "%s"
+    "type" : "%s",
+    "visibility" : "%s"
     })";
 
   char formattedStr[2048];
   sprintf(formattedStr, format.c_str(), variable->getId().c_str(),
-          variable->getType().c_str());
+          variable->getType().c_str(),
+          variable->getAccessType().toString().c_str());
   std::cout << formattedStr;
 }
 }  // namespace UML

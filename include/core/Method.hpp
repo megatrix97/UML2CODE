@@ -19,12 +19,11 @@ class Method : public Attribute {
   void setInvolvedTypes();
 
  public:
-  Method(std::string type, std::string id, VarList inputArgs,
-         ACCESS accessType) {
+  Method(std::string type, std::string id, VarList inputArgs, ACCESS access) {
     m_type = type;
     m_id = id;
     m_inputArgs = inputArgs;
-    m_access = accessType;
+    m_accessType = AccessType::getInstance(access);
     setInvolvedTypes();
   }
   Method(std::string type, std::string id, VarList inputArgs)
