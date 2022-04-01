@@ -61,7 +61,7 @@ class ClassDecl : public Node {
   /// Generally used to determine the required headers
   std::unordered_set<std::string> getInvolvedTypes() const;
 
-  const std::vector<ClassDecl *> &getClassesRelatedWith(RELATION p_relation);
+  const std::vector<ClassDecl *> *getClassesRelatedWith(RELATION p_relation);
 
   void accept(NodeVisitor *visitor) override;
 };

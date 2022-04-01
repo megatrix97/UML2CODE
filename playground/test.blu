@@ -1,0 +1,18 @@
+@startuml
+
+class first {
+    String name
+    int value
+    void getValue()
+}
+
+class second {
+    String name
+    int value
+    # String name1
+    + int number
+    - void privateFunc()
+}
+
+first o-- second
+@enduml
