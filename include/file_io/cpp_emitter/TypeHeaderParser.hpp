@@ -1,8 +1,6 @@
-#ifndef __TYPEHEADERPARSER_HPP__
+#pragma once
 
-#define __TYPEHEADERPARSER_HPP__
 #include <iostream>
-#include <string>
 #include <unordered_map>
 
 struct HeaderInfo {
@@ -17,8 +15,6 @@ class TypeHeaderParser {
   static const std::string filename;
   static bool parsed;
 
-public:
+ public:
   static TypeHeaderInfo *parseAndGetInfo();
 };
-
-#endif
