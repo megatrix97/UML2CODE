@@ -1,3 +1,7 @@
 #include "utils/HashGenerator.hpp"
 
-namespace IRUtils {}
+namespace IRUtils {
+HashKey generateHash(UML::ClassDecl* p_classDecl) {
+  return p_classDecl->getId();
+}
+}

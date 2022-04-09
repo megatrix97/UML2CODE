@@ -17,5 +17,9 @@ target_include_directories(plantuml_parser_exec PUBLIC
 ${CMAKE_CURRENT_BINARY_DIR}
 ${CMAKE_SOURCE_DIR}/../include/)
 
-target_link_directories(plantuml_parser_exec PUBLIC ${CMAKE_SOURCE_DIR}/../build/src/core)
-target_link_libraries(plantuml_parser_exec PUBLIC UML2CODE_core)
+target_link_directories(plantuml_parser_exec PUBLIC 
+${CMAKE_SOURCE_DIR}/../build/src/core
+${CMAKE_SOURCE_DIR}/../build/src/utils)
+target_link_libraries(plantuml_parser_exec PUBLIC 
+uml2code_core
+uml2code_ir_utils)

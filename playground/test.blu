@@ -15,4 +15,5 @@ class second {
 }
 
 first o-- second
+first <|-- third
 @enduml

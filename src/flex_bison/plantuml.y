@@ -6,6 +6,7 @@
     #include "core/Attribute.hpp"
     #include "core/ClassDecl.hpp"
     #include "core/RequiredHeaders.hpp"
+    #include "utils/RelationshipDataProvider.hpp"
 
     extern FILE *yyin;
     extern int yylineno;
@@ -59,6 +60,19 @@ info
 class_relationship
     : ID relationship ID {
         std::cout << "found a relationship : " << $1 << " relation: " << $2 << " " << $3 << std::endl;
+        std::string parentClassName = std::string($1);
+        std::string childClassName = std::string($3);
+        UML::ClassDecl* parent = getClass(std::string($1));
+        UML::ClassDecl* child = getClass(std::string($3));
+        if(parent == null) {
+            parent = new UML::ClassDecl(std::string($1));
+            allClasses.insert(parentClassName, parentClass);
+        }
+        if(child == null) {
+            child = new UML::ClassDecl(std::string($3));
+            allClasses.insert(childClassName, childClass);
+        }
+        RDP::setRelationshipData(parent, child, $2);
     }
     ;
 

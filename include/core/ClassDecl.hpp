@@ -34,6 +34,7 @@ class ClassDecl : public Node {
   std::unordered_map<RELATION, std::vector<ClassDecl *>> m_relatedClasses;
 
  public:
+  ClassDecl(std::string id) : m_id(id) {}
   ClassDecl(std::string id, AttributeList attributes)
       : m_id(id), m_attributes(attributes) {
     for (auto attr : attributes) {

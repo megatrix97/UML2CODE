@@ -1,4 +1,4 @@
-set(LIBRARY_FILE_IO ${PROJECT_NAME}_file_io)
+set(LIBRARY_FILE_IO ${CMAKE_PROJECT_NAME}_file_io)
 
 file(GLOB src_file_io "*.cpp")
 add_library(${LIBRARY_FILE_IO} ${src_file_io})
