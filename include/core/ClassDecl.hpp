@@ -45,7 +45,6 @@ class ClassDecl : public Node {
   }
 
   ~ClassDecl() {
-    // needs non-trivial destructor
     for (auto attr : m_attributes) delete attr;
   }
 

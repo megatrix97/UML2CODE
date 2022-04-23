@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 # get all src files in test directory
 file(GLOB src_test "*.cpp")
 
-add_executable(${BINARY} ${src_test} ${PROJECT_BINARY_DIR}/lexer.cpp ${PROJECT_BINARY_DIR}/parser.cpp)
+add_executable(${BINARY} ${src_test} ${PROJECT_BINARY_DIR}/plantuml_lexer.cpp ${PROJECT_BINARY_DIR}/plantuml_parser.cpp)
 target_include_directories(${BINARY} PUBLIC 
 ${PROJECT_SOURCE_DIR}/include
 ${PROJECT_BINARY_DIR}

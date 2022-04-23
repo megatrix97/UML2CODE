@@ -1,5 +1,5 @@
-#ifndef __FORMATPREF_HPP__
-#define __FORMATPREF_HPP__
+#pragma once
+#include <string>
 
 namespace UML {
 enum LANG { C, CPP };
@@ -13,13 +13,14 @@ enum INDENTATION { DEFAULT, TAB };
 class FormatPref {
   LANG m_language;
   INDENTATION m_indentation;
+  std::string m_destinationDir;
 
-public:
+ public:
   const LANG getLanguage() const;
-  FormatPref setLanguage(LANG aLanguage);
+  FormatPref* setLanguage(LANG aLanguage);
   const INDENTATION getIndentation() const;
-  FormatPref setIndentation(INDENTATION aIndentation);
+  FormatPref* setIndentation(INDENTATION aIndentation);
+  const std::string getDestinationDir();
+  FormatPref* setDestinationDir(std::string aDirectory);
 };
-} // namespace UML
-
-#endif
+}  // namespace UML

@@ -13,18 +13,18 @@ set(SRC_FLEX_BISON src/flex_bison)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-BISON_TARGET(umlParser ${SRC_FLEX_BISON}/tokens.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
-FLEX_TARGET(umlScanner ${SRC_FLEX_BISON}/tokens.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS --header-file)
+BISON_TARGET(umlParser ${SRC_FLEX_BISON}/plantuml.y ${CMAKE_CURRENT_BINARY_DIR}/plantuml_parser.cpp)
+FLEX_TARGET(umlScanner ${SRC_FLEX_BISON}/plantuml.l ${CMAKE_CURRENT_BINARY_DIR}/plantuml_lexer.cpp COMPILE_FLAGS --header-file)
 ADD_FLEX_BISON_DEPENDENCY(umlScanner umlParser)
 
 add_subdirectory(src/core)
 add_subdirectory(src/file_io)
 add_subdirectory(src/file_io/cpp_emitter)
 add_subdirectory(src/utils)
-add_subdirectory(test)
+# add_subdirectory(test)
 
 # for executable
-add_executable(uml2code_exec src/main.cpp ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+add_executable(uml2code_exec src/main.cpp ${CMAKE_CURRENT_BINARY_DIR}/plantuml_parser.cpp ${CMAKE_CURRENT_BINARY_DIR}/plantuml_lexer.cpp)
 target_include_directories(uml2code_exec PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
 ${CMAKE_CURRENT_BINARY_DIR})

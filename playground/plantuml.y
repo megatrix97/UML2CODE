@@ -6,13 +6,16 @@
     #include "core/Attribute.hpp"
     #include "core/ClassDecl.hpp"
     #include "core/RequiredHeaders.hpp"
+    #include "core/UMLContext.hpp"
     #include "utils/RelationshipDataProvider.hpp"
 
     extern FILE *yyin;
     extern int yylineno;
     extern int yylex();
+    extern UML::UMLContext* umlContext;
     void yyerror(const char* s);
-    extern std::unordered_map<std::string, UML::ClassDecl*> allClasses;
+    UML::RelationshipDataProvider* rdp;
+    std::unordered_map<std::string, UML::ClassDecl*> allClasses;
     UML::ClassDecl* getClass(std::string className);
 }
 
@@ -44,7 +47,13 @@
 
 %%
 body
-    : START info END
+    : START info END {
+        std::vector<UML::ClassDecl*> listOfClasses;
+        for(auto x: allClasses){
+            listOfClasses.push_back(x.second);
+        }
+        umlContext = new UML::UMLContext(listOfClasses, rdp, nullptr);
+    }
     ;
 
 info
@@ -72,7 +81,8 @@ class_relationship
             child = new UML::ClassDecl(childClassName);
             allClasses.insert(std::make_pair(childClassName, child));
         }
-        UML::RDP::setRelationshipData(parent, child, $2);    
+        if(rdp == nullptr) rdp = new UML::RelationshipDataProvider();
+        rpd->setRelationshipData(parent, child, $2);    
     }
     ;
 
@@ -86,24 +96,34 @@ relationship
 
 class_def
     : CLASS ID LCURLY attribute_list RCURLY {
-        std::cout << "found class \"" << $2 << "\" definition" << std::endl;
         UML::ClassDecl* cdecl = new UML::ClassDecl($2, *$4);
-        cdecl->accept(new UML::PrintVisitor());
+        allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
     }
     ;
 
 class_decl
     : CLASS ID {
-        std::cout << "found class \"" << $2 << "\" declaration" << std::endl;
+        UML::ClassDecl* cdecl = new UML::ClassDecl($2);
+        allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
     }
     ;
 
 attribute_info
     : ID COLON field {
-        std::cout << "found field for class: " << $1 << std::endl;
+        UML::ClassDecl* cdecl = getClass(std::string($1));
+        if(cdecl == nullptr) {
+            cdecl = new UML::ClassDecl($1);
+            allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
+        }
+        cdecl->addAttribute($3);
     }
     | ID COLON method {
-        std::cout << "found method for class: " << $1 << std::endl;
+        UML::ClassDecl* cdecl = getClass(std::string($1));
+        if(cdecl == nullptr) {
+            cdecl = new UML::ClassDecl($1);
+            allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
+        }
+        cdecl->addAttribute($3);
     }
 
 attribute_list
@@ -121,12 +141,10 @@ attribute
     : field 
     | method
     | visibility field {
-        std::cout << "visibility of field: " << $2->getId() << " is : " << (UML::AccessType::getInstance($1))->toString() << std::endl;
         $2->setAccessType(UML::AccessType::getInstance($1));
         $$ = $2;
     }
     | visibility method {
-        std::cout << "visibility of method : " << $2->getId() << " is: " << (UML::AccessType::getInstance($1))->toString() << std::endl;
         $2->setAccessType(UML::AccessType::getInstance($1));
         $$ = $2;
     }

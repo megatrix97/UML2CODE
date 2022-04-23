@@ -1,8 +1,6 @@
 #include "utils/RelationshipDataProvider.hpp"
 
 namespace UML {
-std::unordered_map<IRUtils::HashKey, std::pair<RELATION, ClassDecl*>>
-    RDP::m_relationshipData;
 const RelationshipData* RDP::getRelationshipData(ClassDecl* p_classDecl) {
   IRUtils::HashKey hash = IRUtils::generateHash(p_classDecl);
   return m_relationshipData.find(hash) != m_relationshipData.end()

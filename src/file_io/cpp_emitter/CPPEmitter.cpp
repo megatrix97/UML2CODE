@@ -21,19 +21,24 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
   for (auto attr : attributeList) {
     if (Variable::isa(attr)) {
       attr->accept(this);
-      // add getter and setter functions for variable with private and
-      // protected access
-      auto getMethod =
-          new Method(attr->getType(),
-                     "get" + EmitterTools::firstLetterToUpper(attr->getId()),
-                     {}, ACCESS::PUBLIC);
-      getMethod->setClass(p_classdecl);
-      auto setMethod = new Method(
-          "void", "set" + EmitterTools::firstLetterToUpper(attr->getId()),
-          {new Variable(attr->getType(), attr->getId())}, ACCESS::PUBLIC);
-      setMethod->setClass(p_classdecl);
-      p_classdecl->addAttribute(getMethod);
-      p_classdecl->addAttribute(setMethod);
+
+      if (auto accessType = attr->getAccessType().getType();
+          accessType == ACCESS::PRIVATE || accessType == ACCESS::PROTECTED) {
+        // add getter and setter functions for variable with private and
+        // protected access
+
+        auto getMethod =
+            new Method(attr->getType(),
+                       "get" + EmitterTools::firstLetterToUpper(attr->getId()),
+                       {}, ACCESS::PUBLIC);
+        getMethod->setClass(p_classdecl);
+        auto setMethod = new Method(
+            "void", "set" + EmitterTools::firstLetterToUpper(attr->getId()),
+            {new Variable(attr->getType(), attr->getId())}, ACCESS::PUBLIC);
+        setMethod->setClass(p_classdecl);
+        p_classdecl->addAttribute(getMethod);
+        p_classdecl->addAttribute(setMethod);
+      }
     }
   }
 
@@ -78,8 +83,8 @@ void CPPEmitter::addRequiredLibraries<false>(ClassDecl *p_classdecl) {
   auto allTypes = p_classdecl->getInvolvedTypes();
   std::unordered_set<std::string> allHeaders;
   for (auto type : allTypes) {
-    if (m_thInfo->find(type) != m_thInfo->end()) {
-      allHeaders.insert((*m_thInfo)[type].m_headerfile);
+    if (m_typeHeaderInfo->find(type) != m_typeHeaderInfo->end()) {
+      allHeaders.insert((*m_typeHeaderInfo)[type].m_headerfile);
     }
   }
   for (auto header : allHeaders) {
@@ -91,19 +96,20 @@ template <>
 void CPPEmitter::addRequiredLibraries<true>(ClassDecl *p_classdecl) {
   // we only include the .hpp file where class is present.
   // Because, we have already included all other libraries in .hpp already.
-  auto header = m_thInfo->find(p_classdecl->getId());
-  if (header != m_thInfo->end()) {
-    std::cout << "header file: " << (*header).second.m_headerfile
-              << ", class: " << (*header).first << std::endl;
+
+  // TODO : Check if it is better to put required libraries in .cpp and
+  // just declare them in .hpp
+  auto header = m_typeHeaderInfo->find(p_classdecl->getId());
+  if (header != m_typeHeaderInfo->end()) {
     m_strStream << "#include \"" << (*header).second.m_headerfile << "\""
                 << std::endl;
   }
 }
 
 inline std::string CPPEmitter::resolveScope(std::string type) {
-  if (m_thInfo->find(type) == m_thInfo->end()) return type;
+  if (m_typeHeaderInfo->find(type) == m_typeHeaderInfo->end()) return type;
 
-  auto nmspc = (*m_thInfo)[type].m_namespace;
+  auto nmspc = (*m_typeHeaderInfo)[type].m_namespace;
   if (!nmspc.empty()) {
     return nmspc + "::" + type;
   } else

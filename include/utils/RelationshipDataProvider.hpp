@@ -6,16 +6,14 @@
 namespace UML {
 using RelationshipData = std::pair<RELATION, ClassDecl *>;
 class RelationshipDataProvider {
-  // <child, <relation, parent>> is the pattern relation is saved.
-  static std::unordered_map<IRUtils::HashKey, RelationshipData>
-      m_relationshipData;
+  // relation is saved in <child, <relation, parent>> pattern.
+  std::unordered_map<IRUtils::HashKey, RelationshipData> m_relationshipData;
 
  public:
-  RelationshipDataProvider() = delete;
-  static const RelationshipData *getRelationshipData(ClassDecl *p_classDecl);
-  static void setRelationshipData(ClassDecl *p_parent, ClassDecl *p_child,
-                                  RELATION p_relation);
-  static void printContents();
+  const RelationshipData *getRelationshipData(ClassDecl *p_classDecl);
+  void setRelationshipData(ClassDecl *p_parent, ClassDecl *p_child,
+                           RELATION p_relation);
+  void printContents();
 };
 using RDP = RelationshipDataProvider;
 }

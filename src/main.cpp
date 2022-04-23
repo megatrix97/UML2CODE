@@ -1,8 +1,8 @@
 #include "core/RequiredHeaders.hpp"
-#include "core/UMLData.hpp"
+#include "core/UMLContext.hpp"
 #include "file_io/FileWriter.hpp"
-#include "file_io/cpp_emitter/TypeHeaderParser.hpp"
-#include "parser.hpp"
+#include "utils/RelationshipDataProvider.hpp"
+#include "plantuml_parser.hpp"
 #include <iostream>
 #include <memory>
 #include <set>
@@ -10,9 +10,8 @@
 #include <string>
 #include <unordered_map>
 
-UML::Node *root;
-std::unordered_set<std::string> TypeTable;
-
+UML::RDP *rdp;
+std::unordered_map<std::string, UML::ClassDecl *> parser_allClasses;
 int main(int argc, char **argv) {
   extern FILE *yyin;
   if (argc != 2) {
@@ -20,23 +19,29 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   yyin = fopen(argv[1], "r");
-  std::cout << "parsing input" << std::endl;
+  std::cout << "[uml2code] parsing input" << std::endl;
   yyparse();
-  std::cout << "completed parsing input " << std::endl;
-  std::cout << "-- TypeTable Contents --" << std::endl;
-  for (auto entry : TypeTable)
-    std::cout << entry << std::endl;
-
-  auto p = std::make_unique<UML::PrintVisitor>();
-
-  auto umlData = std::make_unique<UML::UMLData>(root, TypeTable);
+  std::cout << "[uml2code] completed parsing input " << std::endl;
 
   auto formatPref = std::make_unique<UML::FormatPref>();
-  formatPref->setLanguage(UML::LANG::CPP).setIndentation(UML::INDENTATION::TAB);
+  formatPref->setLanguage(UML::LANG::CPP)
+      ->setIndentation(UML::INDENTATION::TAB)
+      ->setDestinationDir("C:/Users/nithi/Desktop/test");
 
-  auto fw = std::make_unique<UML::FileWriter>(formatPref.get());
+  std::cout << formatPref->getDestinationDir() << std::endl;
 
-  p->visit(root);
-  fw->write(umlData.get());
-  std::cout << "ran write command" << std::endl;
+  // build UMLContext object
+  std::vector<UML::ClassDecl *> listOfClasses;
+  for (auto x : parser_allClasses) {
+    listOfClasses.push_back(x.second);
+  }
+  auto umlContext =
+      std::make_unique<UML::UMLContext>(listOfClasses, rdp, formatPref.get());
+
+  auto p = std::make_unique<UML::PrintVisitor>();
+  for (auto c : umlContext->getAllClasses()) p->visit(c);
+
+  auto fw = std::make_unique<UML::FileWriter>(umlContext.get());
+  fw->write();
+  std::cout << "[uml2code] ran write command" << std::endl;
 }

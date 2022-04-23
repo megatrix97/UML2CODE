@@ -6,13 +6,15 @@
     #include "core/Attribute.hpp"
     #include "core/ClassDecl.hpp"
     #include "core/RequiredHeaders.hpp"
+    #include "core/UMLContext.hpp"
     #include "utils/RelationshipDataProvider.hpp"
 
     extern FILE *yyin;
     extern int yylineno;
     extern int yylex();
     void yyerror(const char* s);
-    extern std::unordered_map<std::string, UML::ClassDecl*> allClasses;
+    extern UML::RelationshipDataProvider* rdp;
+    extern std::unordered_map<std::string, UML::ClassDecl*> parser_allClasses;
     UML::ClassDecl* getClass(std::string className);
 }
 
@@ -62,17 +64,18 @@ class_relationship
         std::cout << "found a relationship : " << $1 << " relation: " << $2 << " " << $3 << std::endl;
         std::string parentClassName = std::string($1);
         std::string childClassName = std::string($3);
-        UML::ClassDecl* parent = getClass(std::string($1));
-        UML::ClassDecl* child = getClass(std::string($3));
-        if(parent == null) {
-            parent = new UML::ClassDecl(std::string($1));
-            allClasses.insert(parentClassName, parentClass);
+        UML::ClassDecl* parent = getClass(parentClassName);
+        UML::ClassDecl* child = getClass(childClassName);
+        if(parent == nullptr) {
+            parent = new UML::ClassDecl(parentClassName);
+            parser_allClasses.insert(std::make_pair(parentClassName, parent));
         }
-        if(child == null) {
-            child = new UML::ClassDecl(std::string($3));
-            allClasses.insert(childClassName, childClass);
+        if(child == nullptr) {
+            child = new UML::ClassDecl(childClassName);
+            parser_allClasses.insert(std::make_pair(childClassName, child));
         }
-        RDP::setRelationshipData(parent, child, $2);
+        if(rdp == nullptr) rdp = new UML::RelationshipDataProvider();
+        rdp->setRelationshipData(parent, child, $2);    
     }
     ;
 
@@ -86,24 +89,34 @@ relationship
 
 class_def
     : CLASS ID LCURLY attribute_list RCURLY {
-        std::cout << "found class \"" << $2 << "\" definition" << std::endl;
         UML::ClassDecl* cdecl = new UML::ClassDecl($2, *$4);
-        cdecl->accept(new UML::PrintVisitor());
+        parser_allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
     }
     ;
 
 class_decl
     : CLASS ID {
-        std::cout << "found class \"" << $2 << "\" declaration" << std::endl;
+        UML::ClassDecl* cdecl = new UML::ClassDecl($2);
+        parser_allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
     }
     ;
 
 attribute_info
     : ID COLON field {
-        std::cout << "found field for class: " << $1 << std::endl;
+        UML::ClassDecl* cdecl = getClass(std::string($1));
+        if(cdecl == nullptr) {
+            cdecl = new UML::ClassDecl($1);
+            parser_allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
+        }
+        cdecl->addAttribute($3);
     }
     | ID COLON method {
-        std::cout << "found method for class: " << $1 << std::endl;
+        UML::ClassDecl* cdecl = getClass(std::string($1));
+        if(cdecl == nullptr) {
+            cdecl = new UML::ClassDecl($1);
+            parser_allClasses.insert(std::make_pair(cdecl->getId(), cdecl));
+        }
+        cdecl->addAttribute($3);
     }
 
 attribute_list
@@ -121,12 +134,10 @@ attribute
     : field 
     | method
     | visibility field {
-        std::cout << "visibility of field: " << $2->getId() << " is : " << (UML::AccessType::getInstance($1))->toString() << std::endl;
         $2->setAccessType(UML::AccessType::getInstance($1));
         $$ = $2;
     }
     | visibility method {
-        std::cout << "visibility of method : " << $2->getId() << " is: " << (UML::AccessType::getInstance($1))->toString() << std::endl;
         $2->setAccessType(UML::AccessType::getInstance($1));
         $$ = $2;
     }
@@ -171,7 +182,7 @@ visibility
 %%
 
 UML::ClassDecl* getClass(std::string className){
-    if(allClasses.find(className) != allClasses.end()) return allClasses[className];
+    if(parser_allClasses.find(className) != parser_allClasses.end()) return parser_allClasses[className];
     return nullptr;
 }
 

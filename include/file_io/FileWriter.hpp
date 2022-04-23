@@ -3,17 +3,17 @@
 
 #include "FormatPref.hpp"
 #include "core/Node.hpp"
-#include "core/UMLData.hpp"
+#include "core/UMLContext.hpp"
 
 namespace UML {
 class FileWriter {
-  FormatPref *m_formatPref;
+  UMLContext* m_umlContext;
 
-public:
-  FileWriter(FormatPref *formatPref) : m_formatPref(formatPref) {}
-  virtual void write(UMLData *umlData);
+ public:
+  FileWriter(UMLContext* umlContext) : m_umlContext(umlContext) {}
+  virtual void write();
   virtual ~FileWriter(){};
 };
-} // namespace UML
+}  // namespace UML
 
 #endif

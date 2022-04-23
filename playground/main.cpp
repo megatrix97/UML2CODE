@@ -9,4 +9,8 @@ int main(int argc, char **argv) {
   yyparse();
   // printing relationship contents
   UML::RDP::printContents();
+  UML::PrintVisitor pv;
+  for (auto &el : allClasses) {
+    el.second->accept(&pv);
+  }
 }
