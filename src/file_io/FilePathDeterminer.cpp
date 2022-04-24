@@ -5,9 +5,9 @@ namespace UML {
 void FilePathDeterminer::determinePaths(std::vector<ClassDecl*> allClasses,
                                         FormatPref* formatPref) {
   auto lang = formatPref->getLanguage();
-  auto destPath = formatPref->getDestinationDir();
+  auto destPath = formatPref->getDestinationDir().string();
   for (auto cls : allClasses) {
-    std::vector<std::string> paths;
+    std::vector<std::filesystem::path> paths;
     switch (lang) {
       case LANG::CPP:
         paths.push_back(destPath + "/src/" + cls->getId() + ".cpp");
@@ -20,11 +20,11 @@ void FilePathDeterminer::determinePaths(std::vector<ClassDecl*> allClasses,
   }
 }
 
-std::vector<std::string> FilePathDeterminer::getFilePath(
+std::vector<std::filesystem::path> FilePathDeterminer::getFilePath(
     ClassDecl* p_classDecl) {
   IRUtils::HashKey classHash = IRUtils::generateHash(p_classDecl);
   return m_filePaths.find(classHash) != m_filePaths.end()
              ? m_filePaths[classHash]
-             : (std::vector<std::string>());
+             : (std::vector<std::filesystem::path>());
 }
 }

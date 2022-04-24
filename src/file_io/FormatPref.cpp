@@ -5,7 +5,9 @@ const LANG FormatPref::getLanguage() const { return m_language; }
 
 const INDENTATION FormatPref::getIndentation() const { return m_indentation; }
 
-const std::string FormatPref::getDestinationDir() { return m_destinationDir; }
+const std::filesystem::path FormatPref::getDestinationDir() {
+  return m_destinationDir;
+}
 
 FormatPref* FormatPref::setLanguage(LANG aLanguage) {
   m_language = aLanguage;
@@ -18,7 +20,13 @@ FormatPref* FormatPref::setIndentation(INDENTATION aIndentation) {
 }
 
 FormatPref* FormatPref::setDestinationDir(std::string aDirectory) {
-  m_destinationDir = aDirectory;
+  std::filesystem::path dirPath{aDirectory};
+  if (!std::filesystem::exists(dirPath) &&
+      !std::filesystem::create_directories(dirPath)) {
+    std::cerr << "[FormatPref] cannot create directory : \"" << aDirectory
+              << "\"" << std::endl;
+  }
+  m_destinationDir = dirPath;
   return this;
 }
 }  // namespace UML

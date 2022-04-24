@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <filesystem>
 #include <string>
 
 namespace UML {
@@ -13,14 +15,14 @@ enum INDENTATION { DEFAULT, TAB };
 class FormatPref {
   LANG m_language;
   INDENTATION m_indentation;
-  std::string m_destinationDir;
+  std::filesystem::path m_destinationDir;
 
  public:
   const LANG getLanguage() const;
   FormatPref* setLanguage(LANG aLanguage);
   const INDENTATION getIndentation() const;
   FormatPref* setIndentation(INDENTATION aIndentation);
-  const std::string getDestinationDir();
+  const std::filesystem::path getDestinationDir();
   FormatPref* setDestinationDir(std::string aDirectory);
 };
 }  // namespace UML
