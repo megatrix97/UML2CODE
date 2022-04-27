@@ -1,9 +1,9 @@
 @startuml
 
 class first {
-    String name
-    int value
-    void getValue()
+    + String name
+    - int value
+    + void getValue()
 }
 
 class second {

@@ -1,5 +1,4 @@
-#ifndef __CPPEMITTER_HPP__
-#define __CPPEMITTER_HPP__
+#pragma once
 
 #include "CPPEmitterTools.hpp"
 #include "core/ClassDecl.hpp"
@@ -50,5 +49,3 @@ class CPPEmitter : public NodeVisitor {
 };
 
 }  // namespace UML
-
-#endif

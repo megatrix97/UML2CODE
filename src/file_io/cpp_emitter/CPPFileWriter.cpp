@@ -28,7 +28,7 @@ void CPPFileWriter::write(UMLContext *p_umlContext) {
     std::string cppFilename = cppFilepath.filename().string(),
                 hppFilename = hppFilepath.filename().string();
 
-    if (cppFilename.compare(cppFilename.size() - 3, 3, "cpp") != 0) {
+    if (cppFilename.compare(cppFilename.size() - 4, 4, ".cpp") != 0) {
       // swap the filepaths when they are misassigned
       cppFilepath.swap(hppFilepath);
     }

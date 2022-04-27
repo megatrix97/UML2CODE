@@ -21,7 +21,7 @@ add_subdirectory(src/core)
 add_subdirectory(src/file_io)
 add_subdirectory(src/file_io/cpp_emitter)
 add_subdirectory(src/utils)
-# add_subdirectory(test)
+add_subdirectory(test)
 
 # for executable
 add_executable(uml2code_exec src/main.cpp ${CMAKE_CURRENT_BINARY_DIR}/plantuml_parser.cpp ${CMAKE_CURRENT_BINARY_DIR}/plantuml_lexer.cpp)

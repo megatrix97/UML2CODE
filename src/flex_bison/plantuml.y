@@ -13,6 +13,12 @@
     extern int yylineno;
     extern int yylex();
     void yyerror(const char* s);
+
+    typedef struct yy_buffer_state *YY_BUFFER_STATE;
+    extern int yyparse();
+    extern YY_BUFFER_STATE yy_scan_string(const char *str);
+    extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
+
     extern UML::RelationshipDataProvider* rdp;
     extern std::unordered_map<std::string, UML::ClassDecl*> parser_allClasses;
     UML::ClassDecl* getClass(std::string className);
@@ -61,7 +67,6 @@ info
 
 class_relationship
     : ID relationship ID {
-        std::cout << "found a relationship : " << $1 << " relation: " << $2 << " " << $3 << std::endl;
         std::string parentClassName = std::string($1);
         std::string childClassName = std::string($3);
         UML::ClassDecl* parent = getClass(parentClassName);
