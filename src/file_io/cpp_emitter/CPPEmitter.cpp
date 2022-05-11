@@ -13,7 +13,15 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
   /// generate content to emit .hpp files
 
   // class declaration
-  m_strStream << "class " << p_classdecl->getId() << " {" << std::endl;
+  m_strStream << "class " << p_classdecl->getId();
+
+  if (auto relationshipInfo =
+          m_umlContext->getRDP()->getRelationshipData(p_classdecl)) {
+    // TODO: Check if every relationship is to be treated as inheritance
+    m_strStream << ": public " << relationshipInfo->second->getId();
+  }
+
+  m_strStream << " {" << std::endl;
 
   auto attributeList = p_classdecl->getAttributeList();
 
@@ -22,7 +30,7 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
     if (Variable::isa(attr)) {
       attr->accept(this);
 
-      if (auto accessType = attr->getAccessType().getType();
+      if (auto accessType = attr->getAccessType()->getType();
           accessType == ACCESS::PRIVATE || accessType == ACCESS::PROTECTED) {
         // add getter and setter functions for variable with private and
         // protected access
@@ -48,20 +56,34 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
   auto isMethodOfAccessType = [](Attribute *aAttribute,
                                  ACCESS aAccess) -> bool {
     return Method::isa(aAttribute) &&
-           aAttribute->getAccessType().getType() == aAccess;
+           aAttribute->getAccessType()->getType() == aAccess;
   };
 
-  // declare private methods
-  for (auto attr : attributeList) {
-    if (isMethodOfAccessType(attr, ACCESS::PRIVATE)) attr->accept(this);
-  }
+  std::vector<Attribute *> publicAttributes, privateAttributes;
+  std::copy_if(attributeList.begin(), attributeList.end(),
+               std::back_inserter(publicAttributes),
+               [isMethodOfAccessType](Attribute *aAttribute) -> bool {
+                 return isMethodOfAccessType(aAttribute, ACCESS::PUBLIC);
+               });
+  std::copy_if(attributeList.begin(), attributeList.end(),
+               std::back_inserter(privateAttributes),
+               [isMethodOfAccessType](Attribute *aAttribute) -> bool {
+                 return isMethodOfAccessType(aAttribute, ACCESS::PRIVATE);
+               });
 
-  m_strStream << "public: " << std::endl;
+  // declare private methods
+  std::for_each(
+      privateAttributes.begin(), privateAttributes.end(),
+      [this](Attribute *aAttribute) -> void { aAttribute->accept(this); });
+
+  if (!publicAttributes.empty()) {
+    m_strStream << "public: " << std::endl;
+  }
 
   // declare public methods
-  for (auto attr : attributeList) {
-    if (isMethodOfAccessType(attr, ACCESS::PUBLIC)) attr->accept(this);
-  }
+  std::for_each(
+      publicAttributes.begin(), publicAttributes.end(),
+      [this](Attribute *aAttribute) -> void { aAttribute->accept(this); });
 
   m_strStream << "}; " << std::endl;
 }

@@ -26,13 +26,5 @@ std::unordered_set<std::string> ClassDecl::getInvolvedTypes() const {
   return m_typesInvolved;
 }
 
-const std::vector<ClassDecl *> *ClassDecl::getClassesRelatedWith(
-    RELATION p_relation) {
-  if (m_relatedClasses.find(p_relation) != m_relatedClasses.end()) {
-    return &m_relatedClasses[p_relation];
-  }
-  return nullptr;
-}
-
 void ClassDecl::accept(NodeVisitor *visitor) { visitor->visit(this); }
 }  // namespace UML

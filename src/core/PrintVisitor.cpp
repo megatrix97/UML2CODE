@@ -62,7 +62,7 @@ void PrintVisitor::visit(Method *method) {
   char formattedStr[2048];
   sprintf(formattedStr, format.c_str(), method->getId().c_str(),
           method->getType().c_str(),
-          method->getAccessType().toString().c_str());
+          method->getAccessType()->toString().c_str());
   std::cout << formattedStr;
 
   auto inputArgs = method->getInputArgList();
@@ -89,7 +89,7 @@ void PrintVisitor::visit(Variable *variable) {
   char formattedStr[2048];
   sprintf(formattedStr, format.c_str(), variable->getId().c_str(),
           variable->getType().c_str(),
-          variable->getAccessType().toString().c_str());
+          variable->getAccessType()->toString().c_str());
   std::cout << formattedStr;
 }
 }  // namespace UML

@@ -42,15 +42,15 @@ NEWLINE [\r\n]+
 "<--"   { return ASSOCIATION; }
     /* relation arrows: end  */
 
-    /* label : start */
+    /* label: start */
 ">" { return RIGHT_ARROW; }
 "<" { return LEFT_ARROW; }
-    /* label : end */
+    /* label: end */
 
-    /* visibility : start */
+    /* visibility: start */
 "+" { return PUBLIC; }
 "-" { return PRIVATE; }
 "#" { return PROTECTED; }
-    /* visibility : end */
+    /* visibility: end */
 
 %%

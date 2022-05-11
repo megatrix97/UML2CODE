@@ -31,7 +31,6 @@ class ClassDecl : public Node {
   AttributeList m_attributes;
   std::string m_id;
   std::unordered_set<std::string> m_typesInvolved;
-  std::unordered_map<RELATION, std::vector<ClassDecl *>> m_relatedClasses;
 
  public:
   ClassDecl(std::string id) : m_id(id) {}
@@ -60,8 +59,6 @@ class ClassDecl : public Node {
   /// @brief utility function to get all the types involved in the class.
   /// Generally used to determine the required headers
   std::unordered_set<std::string> getInvolvedTypes() const;
-
-  const std::vector<ClassDecl *> *getClassesRelatedWith(RELATION p_relation);
 
   void accept(NodeVisitor *visitor) override;
 };

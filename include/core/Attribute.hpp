@@ -46,6 +46,6 @@ class Attribute : public Node {
   std::string getType() const { return m_type; }
   virtual InvolvedTypes getInvolvedTypes() = 0;
   void setAccessType(AccessType *p_accessType) { m_accessType = p_accessType; }
-  const AccessType &getAccessType() const { return *m_accessType; }
+  const AccessType *getAccessType() const { return m_accessType; }
 };
 }  // namespace UML

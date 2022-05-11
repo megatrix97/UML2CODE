@@ -13,6 +13,7 @@ set(SRC_FLEX_BISON src/flex_bison)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
+# flex bison target
 BISON_TARGET(umlParser ${SRC_FLEX_BISON}/plantuml.y ${CMAKE_CURRENT_BINARY_DIR}/plantuml_parser.cpp)
 FLEX_TARGET(umlScanner ${SRC_FLEX_BISON}/plantuml.l ${CMAKE_CURRENT_BINARY_DIR}/plantuml_lexer.cpp COMPILE_FLAGS --header-file)
 ADD_FLEX_BISON_DEPENDENCY(umlScanner umlParser)
