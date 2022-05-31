@@ -4,6 +4,7 @@
 #include "Attribute.hpp"
 #include "NodeVisitor.hpp"
 #include "Variable.hpp"
+#include <unordered_set>
 #include <algorithm>
 #include <vector>
 
@@ -13,25 +14,26 @@ using VarList = std::vector<Variable *>;
 class Method : public Attribute {
   VarList m_inputArgs;
   ClassDecl *m_class = nullptr;
+  std::unordered_set<std::string> m_typesInvolved;
 
-public:
-  // ctor
-  Method(std::string type, std::string id, VarList inputArgs,
-         ACCESS accessType) {
+  void setInvolvedTypes();
+
+ public:
+  Method(std::string type, std::string id, VarList inputArgs, ACCESS access) {
     m_type = type;
     m_id = id;
     m_inputArgs = inputArgs;
-    m_access = accessType;
+    m_accessType = AccessType::getInstance(access);
+    setInvolvedTypes();
   }
   Method(std::string type, std::string id, VarList inputArgs)
       : Method(type, id, inputArgs, ACCESS::PRIVATE) {}
 
-  // dtor
   ~Method() {
-    for (auto var : m_inputArgs)
-      delete (var);
+    for (auto var : m_inputArgs) delete (var);
   }
 
+  InvolvedTypes getInvolvedTypes() override;
   const VarList &getInputArgList() const { return m_inputArgs; }
   const inline size_t getNumOfInputArgs() const { return m_inputArgs.size(); }
   bool isPropertyOfClass() const { return m_class != nullptr; }
@@ -40,6 +42,6 @@ public:
   static bool isa(Node *node);
   void accept(NodeVisitor *visitor) override;
 };
-} // namespace UML
+}  // namespace UML
 
 #endif

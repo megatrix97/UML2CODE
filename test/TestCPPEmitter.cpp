@@ -1,22 +1,38 @@
-#include "core/PrintVisitor.hpp"
-#include "parser.hpp"
+#include "file_io/cpp_emitter/CPPEmitter.hpp"
+#include "plantuml_parser.hpp"
+#include <gmock/gmock-matchers.h>
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <memory>
+#include <string.h>
 
-UML::Node *root;
-std::unordered_set<std::string> TypeTable;
+UML::RDP *rdp;
+std::unordered_map<std::string, UML::ClassDecl *> parser_allClasses;
 
-UML::Node *parseString(char *inputString) {
-  YY_BUFFER_STATE buffer = yy_scan_string(inputString);
+void parseString(std::string inputString) {
+  int n = inputString.length();
+  char arr[n + 1];
+  strcpy_s(arr, n + 1, inputString.c_str());
+  YY_BUFFER_STATE buffer = yy_scan_string(arr);
   yyparse();
   yy_delete_buffer(buffer);
-  return root;
 }
 
-TEST(CPPEmitter, test1) {
-  char inputString[] = "class NewClass{int x; int y; void newFunc(int x);};\0";
-  auto rootNode = parseString(inputString);
-  auto pv = std::make_unique<UML::PrintVisitor>();
-  pv->visit(rootNode);
-  EXPECT_EQ(1, 1);
+TEST(CPPEmitter, checkHPPAndCPP) {
+  std::string inputString = R"(@startuml
+  class first {
+    string name
+    int value
+  }
+
+  class second {
+    + string name
+    + int value
+  }
+
+  @enduml)";
+
+  parseString(inputString);
+  EXPECT_EQ(parser_allClasses.size(), 2);
+  std::cout << "Test parsing complete" << std::endl;
 }

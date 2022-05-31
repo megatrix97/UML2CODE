@@ -11,6 +11,10 @@ const AttributeList &ClassDecl::getAttributeList() const {
 }
 
 void ClassDecl::addAttribute(Attribute *p_attribute) {
+  InvolvedTypes it = p_attribute->getInvolvedTypes();
+  for (auto i : it) {
+    m_typesInvolved.insert(i);
+  }
   m_attributes.push_back(p_attribute);
 }
 
@@ -18,19 +22,9 @@ const inline size_t ClassDecl::getNumOfAttributes() const {
   return m_attributes.size();
 }
 
-bool ClassDecl::doesInherit() const { return !m_inherits.empty(); }
-
-const std::vector<ClassDecl *> &ClassDecl::getListOfParents() const {
-  return m_inherits;
-}
-
-std::unordered_set<std::string> ClassDecl::getTypesInvolved() const {
-  std::unordered_set<std::string> allTypes;
-  for (auto attr : m_attributes) {
-    allTypes.insert(attr->getType());
-  }
-  return allTypes;
+std::unordered_set<std::string> ClassDecl::getInvolvedTypes() const {
+  return m_typesInvolved;
 }
 
 void ClassDecl::accept(NodeVisitor *visitor) { visitor->visit(this); }
-} // namespace UML
+}  // namespace UML

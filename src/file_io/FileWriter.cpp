@@ -4,17 +4,12 @@
 #include <memory>
 
 namespace UML {
-
-void FileWriter::write(UMLData *umlData) {
-  switch (m_formatPref->getLanguage()) {
-  case LANG::CPP: {
-    CPPFileWriter cppFileWriter;
-    cppFileWriter.write(umlData);
-    break;
-  }
-  default:
-    break;
+void FileWriter::write() {
+  switch (m_umlContext->getFormatPref()->getLanguage()) {
+    case LANG::CPP: {
+      CPPFileWriter cppFileWriter;
+      cppFileWriter.write(m_umlContext);
+    }
   }
 }
-
-} // namespace UML
+}  // namespace UML
