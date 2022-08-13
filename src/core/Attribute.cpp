@@ -19,6 +19,7 @@ std::string AccessType::toString() const {
       return "ACCESSTYPE_INVALID";
   }
 }
+
 std::ostream &operator<<(std::ostream &os, const AccessType &obj) {
   os << obj.toString();
   return os;

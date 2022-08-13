@@ -16,7 +16,8 @@ void CPPEmitter::generateContent<false>(ClassDecl *p_classdecl) {
   m_strStream << "class " << p_classdecl->getId();
 
   if (auto relationshipInfo =
-          m_umlContext->getRDP()->getRelationshipData(p_classdecl)) {
+          m_umlContext->getRDP()->getRelationshipData(p_classdecl);
+      relationshipInfo != nullptr) {
     // TODO: Check if every relationship is to be treated as inheritance
     m_strStream << ": public " << relationshipInfo->second->getId();
   }
