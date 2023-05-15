@@ -17,6 +17,7 @@ class CPPEmitterTest : public ::testing::Test {
   void SetUp() {
     formatPref = new UML::FormatPref();
     formatPref->setLanguage(UML::LANG::CPP);
+    formatPref->setDestinationDir(".");
   }
 
   void TearDown() {
