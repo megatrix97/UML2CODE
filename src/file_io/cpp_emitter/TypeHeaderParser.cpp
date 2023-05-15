@@ -5,12 +5,12 @@
 #include <stdlib.h>
 
 bool TypeHeaderParser::parsed = false;
-std::string const TypeHeaderParser::filename = "../res/CPPTypeHeaders.txt";
+std::string const TypeHeaderParser::filename =
+    R"(C:\Users\nithi\OneDrive\Documents\Learning\CPP\Project\uml2code\res\CPPTypeheaders.txt)";
 TypeHeaderInfo TypeHeaderParser::typeHeaderInfo{};
 
-TypeHeaderInfo &TypeHeaderParser::parseAndGetInfo() {
-  if (parsed)
-    return typeHeaderInfo;
+TypeHeaderInfo *TypeHeaderParser::parseAndGetInfo() {
+  if (parsed) return &typeHeaderInfo;
 
   std::ifstream fileToParse;
   fileToParse.open(filename);
@@ -35,5 +35,5 @@ TypeHeaderInfo &TypeHeaderParser::parseAndGetInfo() {
   }
   fileToParse.close();
   parsed = true;
-  return typeHeaderInfo;
+  return &typeHeaderInfo;
 }

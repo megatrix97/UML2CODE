@@ -1,9 +1,9 @@
 #pragma once
-#include "core/UMLData.hpp"
+#include "core/UMLContext.hpp"
 
 namespace UML {
 class CPPFileWriter {
-public:
-  void write(UMLData *aData);
+ public:
+  void write(UMLContext *umlContext);
 };
-} // namespace UML
+}  // namespace UML
